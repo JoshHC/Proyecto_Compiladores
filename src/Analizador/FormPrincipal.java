@@ -69,7 +69,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(txtResultado);
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Josué David Higueros Calderón - 1169317 - Ingenierñia Informática y de Sistemas");
+        jLabel2.setText("Josué David Higueros Calderón - 1169317 - Ingeniería Informática y de Sistemas");
         jLabel2.setToolTipText("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -128,49 +128,78 @@ public class FormPrincipal extends javax.swing.JFrame {
             String resultado = "";
             //Contador de Tokens
             int Contador = 0;
-            
-            //CAMBIAR CURRENTPOS Y MARKEDPOS A PUBLICOS PARA PODER LEERLOS
-            
+
             while (true) 
             {
                 //se crea una instancia de la clase tokens
                 Tokens tokens = lexer.yylex();
                 if (tokens == null) 
                 {
+                    //Se concatena la palabra FIN cuando ya se finalizó el proceso
                     resultado += "FIN";
+                    //Se coloca el texto en el JTextPanel
                     txtResultado.setText(resultado);
+                    //Se manda a escribir la salida en un archivo de texto
                     EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql"," "), txtruta.getText(), resultado);
                     return;
                 }
                 switch (tokens) {
+                    
                     case ERROR:
-                        resultado += "Simbolo no definido" +"\n";
+                        resultado += " Simbolo no definido en el lenguaje" + lexer.lexeme + "\n";
                         break;
-                    case Identificador: case Int: case String: 
+                        
+                    case Identificador: 
                         
                         if(lexer.lexeme.length() > 31)
                         {
-                        resultado += "Token "+ Contador + ":"+" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "PI: "+lexer.zzCurrentPos+"  "+"PF: "+lexer.zzMarkedPos + "\n";
-                        Contador++;
+                            //Si el identificador es mayor a 31 caracteres
+                            resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "Linea: "+lexer.line+"   "+" PI: "+lexer.initialcolumn+"  "+"PF: "+lexer.finalcolumn + "\n" + "\n";
+                            Contador++;
                         }
                         else
                         {
-                        resultado += "Token "+ Contador + ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Posición Inicial: "+lexer.zzCurrentPos+"  "+"Posición Final: "+lexer.zzMarkedPos + "\n";
-                        Contador++;
+                            //Si el identificador cumple con las reglas
+                            resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme+ " Es un " + tokens + "\n" + "Linea: "+lexer.line +"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                            Contador++;
                         }
                         break;
                         
                     case Reservadas:
-                        resultado += "Token "+ Contador + ":"+" El elemento "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Posición Inicial: "+lexer.zzCurrentPos+"  "+"Posición Final: "+lexer.zzMarkedPos + "\n";
+                        //Si es una palabra reservada
+                        resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: "+lexer.line+"  "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                         Contador++;
                         break;
                         
-                    case Comentario:
-                         resultado += "Token "+ Contador + ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Posición Inicial: "+lexer.zzCurrentPos+"  "+"Posición Final: "+lexer.zzMarkedPos + "\n";
-                        Contador++;
+                    case StringE:
+                        resultado += "ERROR, el string excede la cantidad de líneas permitidas \n";
                         break;
+                 
+                    case Int: case String: case Float: case Bit:
+                         resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                         Contador++;
+                        break;
+                        
+                    case Comentario: 
+                          resultado += "Comentario multilinea o simple\n";
+                        break;
+                        
+                    case ComentarioE:
+                        resultado += "ERROR, el comentario no posee el operador de cierre\n";
+                    break;     
+                        
                     default:
-                        resultado += "Token: " + tokens + "\n";
+                        if(tokens.toString().contains("_"))
+                        {
+                            String temporal = tokens.toString().replace("_", " ");
+                            resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es " + temporal + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                            Contador++;
+                        }
+                        else
+                        {
+                            resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                            Contador++;
+                        }
                         break;
                 }
             }
@@ -203,12 +232,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             bw.write(Contenido);
         }
         bw.close();   
-    }
-    
-    //Método que obtiene la línea en donde se encuentra una determinada palabra
-    public void ObtenerLinea(String Nombre)
-    {
-        String Prueba = txtResultado.getText();
+        
     }
     
     /**

@@ -5,17 +5,18 @@ import static Analizador.Tokens.*;
 %%
 %class Alexico
 %type Tokens
+%line
+%column
 
 /* Inicio de Expresiones regulares */
 L=[a-zA-Z_]+
 D=[0-9]+
-
 Digito = [0-9]
 Numero = {Digito} {Digito}*
 Letra = [A-Za-z]
 Palabra = {Letra} {Letra}*
 Guion = "_"
-Espacio=[ ,\t,\r,\n]+
+Espacio = [ \t\r\n]+
 Operador = "+"|"-"|"*"|"/"|"%"|"<"|"<="|">"|">="|"="|"=="|"!="|"&&"|"||"
 Puntuacion = "!"|";"|","|"."
 SignosA = "[]"|"()"|"{}"
@@ -27,7 +28,11 @@ SignosCierre = "]"|"}"|")"
 
 %{
     public String lexeme;
+    public int line;
+    public int initialcolumn;
+    public int finalcolumn;
 %}
+
 %%
 /* Finaliza la sección de declaraciones de JFlex */
 
@@ -53,41 +58,136 @@ SQLERROR|CONNECT|SQLSTATE|CONNECTION|SQLWARNING|ISOLATION|SUBSTRING|CONSTRAINTS|
 LEADING|TIME|CROSS|LEVEL|TIMESTAMP|TIMEZONE_HOUR|LOCAL|TIMEZONE_MINUTE|LOWER|MATCH|TRAILING|MAX|MIN|TRANSLATE|DATE|MINUTE|
 TRANSLATION|DAY|MODULE|TRIM|MONTH|TRUE|DEC|NAMES|DECIMAL|NATURAL|UNKNOWN|NCHAR|DEFERRABLE|NEXT|UPPER|DEFERRED|NO|USAGE|NONE|USING|
 DESCRIBE|VALUE|DESCRIPTOR|DIAGNOSTICS|NUMERIC|VARCHAR|DISCONNECT|OCTET_LENGTH|DOMAIN|ONLY|WHENEVER|WORK|END-EXEC|WRITE|YEAR|
-OUTPUT|ZONE|EXCEPTION {lexeme=yytext(); return Reservadas;}
+OUTPUT|ZONE|EXCEPTION {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Reservadas;}
 
 /*ESPACIOS*/
-{Espacio} {/*Ignore*/}
+{Espacio}+ {/*Ignore*/}
 
 /*COMENTARIOS*/
-"//".* {lexeme=yytext(); return Comentario;}
-("/*".*"*/") {lexeme=yytext(); return Comentario;}
+"--".* {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
+("/*" [^*] ~"*/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
+("/*" "*"+ "/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
+("/*"[^\r\n/]*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
+//("/*"([^*/])*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 
 /*VARIABLE TIPO BIT*/
-(0|1|NULL) {lexeme=yytext(); return Bit;}
+(0|1|NULL) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Bit;}
 
 /*VARIABLE TIPO INT*/
-({Numero}) {lexeme=yytext(); return Int;}
-("(-"{D}+")")|{D}+ {lexeme=yytext(); return Int;}
+({Numero}) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Int;}
+("-"{Numero})|("+"{Numero}) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Int;}
 
 /*VARIABLE TIPO STRING*/
-("'"(.[^'])*"'") {lexeme=yytext(); return String;}
+("'"([^'\r\n])*"'") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return String;}
+("'") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ERROR;}
+("'"([^'\r\n]*)) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return StringE;}
 
 /*VARIABLE TIPO FLOAT*/
-({Numero}+"."{Numero}*) {lexeme=yytext(); return Float;}
-//({Numero}+.({Numero}*)((E|e)(+|-)({Numero}))?) {lexeme=yytext(); return Float;}
+({Numero}+"."{Numero}*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Float;}
+({Numero}+"."{Numero}*(E|e)?("+"|"-")?{Numero}?) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Float;}
 
 /*SIMBOLO IGUAL*/
-"=" {return Simbolo Igual;}
+"=" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Igual;}
+
 /*SUMA*/
-("+") {return Suma;}
+("+") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Suma;}
+
 /*RESTA*/
-"-" {return Resta;}
+"-" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Resta;}
+
 /*MULTIPLICACION*/
-"*" {return Multiplicacion;}
+"*" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Multiplicacion;}
+
 /*DIVISION*/
-"/" {return Division;}
+"/" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Division;}
+
+/*SIMBOLO PORCENTAJE*/
+"%" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Porcentaje;}
+
+/*SIMBOLO MENOR QUE*/
+"<" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Menor_que;}
+
+/*SIMBOLO MENOR O IGUAL QUE*/
+"<=" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Menor_o_igual_que;}
+
+/*SIMBOLO MAYOR QUE*/
+">" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Mayor_que;}
+
+/*SIMBOLO MAYOR O IGUAL QUE*/
+">=" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Mayor_o_igual_que;}
+
+/*DOBLE ASIGNACION*/
+"==" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Operador_de_Igualdad;}
+
+/*SIMBOLO NO ES IGUAL*/
+"!=" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Operador_no_igual;}
+
+/*AND*/
+"&&" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Operador_AND;}
+
+/*OR*/
+"||" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Operador_OR;}
+
+/*SIGNO DE EXCLAMACIÓN*/
+"!" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Signo_de_Exclamación;}
+
+/*SIGNO DE INTERROGACION*/
+"?" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Cierre_signo_de_Interrogacion;}
+
+/*SIGNO DE INTERROGACION*/
+"¿" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Apertura_signo_de_Interrogacion;}
+
+/*PUNTO Y COMA*/
+";" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Punto_y_coma;}
+
+/*COMA*/
+(,) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Coma;}
+
+/*PUNTO*/
+"." {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Punto;}
+
+/*ARROBA*/
+"@" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Arroba;}
+
+/*NUMERAL*/
+"#" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Numeral;}
+
+/*DOBLE NUMERAL*/
+"##" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Doble_Numeral;}
+
+/*CORCHETES*/
+"[]" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Corchetes;}
+
+/*LLAVES*/
+"{}" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Llaves;}
+
+/*PARENTESIS*/
+"()" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Paréntesis;}
+
+/*APERTURA DE CORCHETES*/
+"[" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Apertura_de_corchetes;}
+
+/*APERTURA DE LLAVES*/
+"{" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Apertura_de_llaves;}
+
+/*APERTURA DE PARÉNTESIS*/
+"(" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Apertura_de_paréntesis;}
+
+/*CIERRE DE CORCHETES*/
+"]" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Cierre_de_corchetes;}
+
+/*CIERRE DE LLAVES*/
+"}" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Cierre_de_llaves;}
+
+/*CIERRE DE PARÉNTESIS*/
+")" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Cierre_de_paréntesis;}
+
+/*SIMBOLO GUION BAJO*/
+"_" {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Guión_bajo;}
+
 /*IDENTIFICADOR*/
-{L}({L}|{D}|{Guion})* {lexeme=yytext(); return Identificador;}
- . {return ERROR;}
+{L}({L}|{D}|{Guion})* {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Identificador;}
+
+. {line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ERROR;}
 
 /* Finaliza Sección de Reglas */

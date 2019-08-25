@@ -102,7 +102,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Josu&#xe9; David Higueros Calder&#xf3;n - 1169317 - Ingenier&#xf1;ia Inform&#xe1;tica y de Sistemas"/>
+        <Property name="text" type="java.lang.String" value="Josu&#xe9; David Higueros Calder&#xf3;n - 1169317 - Ingenier&#xed;a Inform&#xe1;tica y de Sistemas"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
     </Component>
