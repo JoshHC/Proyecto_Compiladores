@@ -52,7 +52,7 @@ public class FormPrincipal extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Analizador Léxico");
+        jLabel1.setText("Analizador Léxico - MiniSQL");
 
         txtruta.setEnabled(false);
 
