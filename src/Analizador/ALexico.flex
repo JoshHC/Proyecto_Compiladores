@@ -67,7 +67,7 @@ OUTPUT|ZONE|EXCEPTION {lexeme = yytext(); line = yyline; initialcolumn = yycolum
 "--".* {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
 ("/*" [^*] ~"*/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
 ("/*" "*"+ "/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
-("/*"[^\r\n/]*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
+("/*"[^\r\n.*]*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 //("/*"([^*/])*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 
 /*VARIABLE TIPO BIT*/
