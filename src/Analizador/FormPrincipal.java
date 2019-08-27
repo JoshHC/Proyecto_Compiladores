@@ -163,7 +163,7 @@ public class FormPrincipal extends javax.swing.JFrame {
                         
                     case Comentario: 
                           //quitar comentario
-                          resultado += "Comentario multilinea o simple" + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                         // resultado += "Comentario multilinea o simple" + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                         break;
                         
                     case ComentarioE:
