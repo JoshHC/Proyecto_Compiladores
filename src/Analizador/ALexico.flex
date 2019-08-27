@@ -9,7 +9,7 @@ import static Analizador.Tokens.*;
 %column
 
 /* Inicio de Expresiones regulares */
-L=[a-zA-Z_]+
+L=[a-zA-Z]+
 D=[0-9]+
 Digito = [0-9]
 Numero = {Digito} {Digito}*
