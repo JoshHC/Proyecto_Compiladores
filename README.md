@@ -18,4 +18,6 @@ Por lo que el analizador leera un archivo .minisql el cual contendra instruccion
 
 el analizador ignorará los comentarios y solo mostrara los TOKENS, indicando en que línea se encuentran y la columna donde empieza y termina el respectivo token, luego generará la salida en un archivo .out el cual contendra el analisis del archivo ingresado y se encontrara en la misma ubicación de donde se obtuvo el archivo .txt para analizar.
 
+El analizador léxico es un analizador robusto, ya que reconoce los errores y tokens correctos, analizando cada sentencia de forma separa de acuerdo a los parámetros establecidos por lo que cumple con los requisitos requeridos por el lenguaje.
+
 
