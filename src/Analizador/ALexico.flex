@@ -66,7 +66,7 @@ OUTPUT|ZONE|EXCEPTION {lexeme = yytext(); line = yyline; initialcolumn = yycolum
 /*COMENTARIOS*/
 "--".* {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
 ("/*" [^*] ~"*/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
-("/*" "*"+ "/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
+("/*" [*.]+ ~"*/") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Comentario;}
 ("/*"[^\r\n.*]*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 //("/*"([^*/])*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 
@@ -188,6 +188,6 @@ OUTPUT|ZONE|EXCEPTION {lexeme = yytext(); line = yyline; initialcolumn = yycolum
 /*IDENTIFICADOR*/
 {L}({L}|{D}|{Guion})* {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Identificador;}
 
-. {line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ERROR;}
+. {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ERROR;}
 
 /* Finaliza Sección de Reglas */
