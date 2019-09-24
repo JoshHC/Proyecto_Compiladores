@@ -13,10 +13,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import jdk.nashorn.internal.parser.Token;
 
 /**
  *
@@ -31,6 +34,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
     }
+    
+    List<String> SintactiList = new ArrayList<String>();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -107,8 +112,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             Alexico lexer = new Alexico(lector);
             //se crea una variable para el resultado
             String resultado = "";
-            //Contador de Tokens
-            int Contador = 0;
 
             while (true) 
             {
@@ -135,31 +138,32 @@ public class FormPrincipal extends javax.swing.JFrame {
                         if(lexer.lexeme.length() > 31)
                         {
                             //Si el identificador es mayor a 31 caracteres
-                            resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
+                            resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                             SintactiList.add(lexer.lexeme);
                         }
                         else
                         {
                             //Si el identificador cumple con las reglas
-                            resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme+ " Es un " + tokens + "\n" + "Linea: "+lexer.line +"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
+                            resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme+ " Es un " + tokens + "\n" + "Linea: "+lexer.line +"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                            SintactiList.add(lexer.lexeme);
                         }
                         break;
                         
                     case Reservadas:
                         //Si es una palabra reservada
-                        resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: "+lexer.line+"  "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                        Contador++;
+                        resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: "+lexer.line+"  "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                        SintactiList.add(lexer.lexeme);
                         break;
                         
                     case StringE:
                         resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                         SintactiList.add(lexer.lexeme);
                         break;
                  
                     case Int: case String: case Float: case Bit:
-                         resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                         Contador++;
-                        break;
+                         resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                         SintactiList.add(lexer.lexeme);
+                         break;
                         
                     case Comentario: 
                           //quitar comentario
@@ -175,13 +179,13 @@ public class FormPrincipal extends javax.swing.JFrame {
                         if(tokens.toString().contains("_"))
                         {
                             String temporal = tokens.toString().replace("_", " ");
-                            resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es " + temporal + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
+                            resultado += "TOKEN " +":"+" El elemento: "+lexer.lexeme + " Es " + temporal + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                             SintactiList.add(lexer.lexeme);
                         }
                         else
                         {
-                            resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
+                            resultado += "TOKEN " +":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                            SintactiList.add(lexer.lexeme);
                         }
                         break;
                 }
@@ -195,6 +199,11 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
+    
+    public final void emparejar(String Tokesperado)
+    {
+      
+    }
     
     //Método que escribe la salida del archivo .out
     public void EscribirSalida(String Nombre, String ruta, String Contenido) throws IOException
