@@ -40,6 +40,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     }
     public Queue<TOKEN> SintacticList = new LinkedList<TOKEN>();
     public TOKEN Token = new TOKEN();
+    public boolean Prueba;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -225,11 +226,13 @@ public class FormPrincipal extends javax.swing.JFrame {
 
     //List<String> tokesperado
     public void errorsintactico(Object tokesperado, int linea, int PI) {
+        
+        if(Prueba != true)
+        {
         //Funcion para desapilar hasta encontrar el ; o el GO
         desencolar();
-        JOptionPane.showMessageDialog(null, "Error en la expresión, Linea: " + (linea + 1) + ", Columna: "+PI+ " se esperaba los siguientes Token(s)" + tokesperado, "ERROR SINTÁCTICO", JOptionPane.WARNING_MESSAGE);
-        //Mostrar el error tambien en el Jtextpanel
-        txtResultado.setText("");
+        JOptionPane.showMessageDialog(null, "Error en la expresión, Linea: " + (linea + 1) + ", Columna: "+PI+ " se esperaba los siguientes Token(s):  " + tokesperado, "ERROR SINTÁCTICO", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     //Método que desencola hasta encontrar un ; o un GO
@@ -239,17 +242,14 @@ public class FormPrincipal extends javax.swing.JFrame {
         while (finalexpresion == false) {
 
             if (Token.Valor.equals(";") || Token.Valor.equals("GO")) {
-                SintacticList.poll();
                 finalexpresion = true;
                 break;
             } else {
                 Token = SintacticList.poll();
             }
         }
-
-        if (Token.Valor.equals(";") || Token.Valor.equals("GO")) {
-            SintacticList.poll();
-        }
+        
+        Prueba = true;
     }
 
     //Método en donde inicia la gramática
@@ -313,6 +313,14 @@ public class FormPrincipal extends javax.swing.JFrame {
         } 
         else {
             errorsintactico("[ " + "String " + "Identificador ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALIASSPACE()
+    {
+        if(Token.Valor.equals(" "))
+        {
+            emparejar(" ");
         }
     }
 
@@ -691,9 +699,10 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             CREATEDATABASE();
         }
-        else if(Token.Valor.equals("INDEX"))
+        else if(Token.Valor.equals("INDEX") || Token.Valor.equals("UNIQUE") || 
+                Token.Valor.equals("CLUSTERED") || Token.Valor.equals("NONCLUSTERED"))
         {
-            
+            CREATEINDEX();
         }
         else if(Token.Valor.equals("USER"))
         {
@@ -713,7 +722,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         if(Token.Valor.equals("USER"))
         {
             emparejar("USER");
-            emparejar("Identificador");
+            ID();
         }
         else 
         {
@@ -772,12 +781,106 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    public void CREATEINDEX() {
+        if(Token.Valor.equals("UNIQUE") || Token.Valor.equals("CLUSTERED") || 
+           Token.Valor.equals("NONCLUSTERED") || Token.Valor.equals("INDEX"))
+        {
+            CREATEINDEXA();
+            COLUMNCONSTRAINTC();
+            emparejar("INDEX");
+            ID();
+            emparejar("ON");
+            OBJECT3();
+            COLUMNINDEX();
+            INCLUDEINDEX();
+            WHERE();
+            OPTIONALON();
+        }
+        else
+        {
+            errorsintactico("UNIQUE " + "CLUSTERED " + "NONCLUSTERED " + "INDEX", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void CREATEINDEXA() {
+        if(Token.Valor.equals("UNIQUE"))
+        {
+            emparejar("UNIQUE");
+        }
+    }
+    
+    public void COLUMNINDEX() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            COLUMNINDEXA();
+            emparejar(")");
+        }
+        else
+        {
+            errorsintactico("(", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNINDEXA() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            ORDERB();
+            COLUMNINDEXB();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNINDEXB() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            ID();
+            ORDERB();
+            COLUMNINDEXB();
+        }
+    }
+    
+    public void INCLUDEINDEX() {
+        if(Token.Valor.equals("INCLUDE"))
+        {
+            emparejar("INCLUDE");
+            COLUMNLIST();
+        }
+            
+    }
+    
+    public void OPTIONALON() {
+        if(Token.Valor.equals("ON"))
+        {
+            emparejar("ON");
+            ID();
+            emparejar("(");
+            ID();
+            emparejar(")");
+        }
+    }
+    
     public void NFR() {
         if(Token.Valor.equals("NOT"))
         {
             emparejar("NOT");
+            if(SintacticList.peek().Valor.equals("FOR"))
+            {
             emparejar("FOR");
+            if(SintacticList.peek().Valor.equals("REPLICATION"))
+            {
             emparejar("REPLICATION");
+            }
+            else
+            {
+                errorsintactico("REPLICATION", Token.Linea, Token.PI);
+            }
+            }
         }
     }
     
@@ -807,6 +910,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             emparejar(",");
             CNC();
+            CNCA();
         }
     }
     
@@ -956,6 +1060,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             OBJECT2();
             COLUMNCONSTRAINTE();
             COLUMNCONSTRAINTF();
+            COLUMNCONSTRAINTG();
             NFR();
         }
         else if(Token.Valor.equals("CHECK"))
@@ -1007,10 +1112,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             COLUMNCONSTRAINTG();
             COLUMNCONSTRAINTL();
         }
-        else
-        {
-            errorsintactico("ON", Token.Linea, Token.PI);
-        }
     }
     
     public void COLUMNCONSTRAINTG() {
@@ -1052,11 +1153,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             emparejar("SET");
             COLUMNCONSTRAINTH();
-        }
-        else if(Token.Valor.equals("NO"))
-        {
-            emparejar("NO");
-            emparejar("ACTION");
         }
         else
         {
@@ -1527,6 +1623,7 @@ public class FormPrincipal extends javax.swing.JFrame {
 
     public void DROPUSER() {
         if (Token.Valor.equals("USER")) {
+            emparejar("USER");
             IFEXIST();
             ID();
         } else {
@@ -1791,7 +1888,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     public void EXPRESIOND() {
        if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
             || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
-            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            Token.Valor.equals("@") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
             || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT")) 
        {
            EXPRESIONE(); 
@@ -1864,6 +1961,11 @@ public class FormPrincipal extends javax.swing.JFrame {
         else if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
         {
             OBJECT4();
+            emparejar(")");
+        }
+        else if(Token.Valor.equals("*"))
+        {
+            emparejar("*");
             emparejar(")");
         }
         else
@@ -1942,6 +2044,11 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             EXPRESION();
             ALIAS();
+            SELECTCOLUMNSA();
+        }
+        else if(Token.Valor.equals("*"))
+        {
+            emparejar("*");
             SELECTCOLUMNSA();
         }
         else
@@ -2032,7 +2139,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             emparejar("GROUP");
             emparejar("BY");
-            OBJECT4();
+            EXPRESION();
             GROUPBYA();
         }
     }
@@ -2041,7 +2148,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         if(Token.Valor.equals(","))
         {
             emparejar(",");
-            OBJECT4();
+            EXPRESION();
+            GROUPBYA();
         }
     }
 
@@ -2059,7 +2167,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             emparejar("ORDER");
             emparejar("BY");
-            OBJECT4();
+            EXPRESION();
             ORDERA();
             ORDERB();
             ORDERC();
@@ -2088,7 +2196,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     public void ORDERC() {
         if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
         {
-            OBJECT4();
+            EXPRESION();
             ORDERA();
             ORDERB();
         }
@@ -2118,7 +2226,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     
     public void JOIN() {
         if(Token.Valor.equals("INNER") || Token.Valor.equals("RIGHT") || 
-           Token.Valor.equals("LEFT") || Token.Valor.equals("FULL"))
+           Token.Valor.equals("LEFT") || Token.Valor.equals("FULL") || Token.Valor.equals("JOIN"))
         {
            TYPE();
            emparejar("JOIN");
@@ -2211,7 +2319,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     
     public void PREDICADOA() {
        if (Token.Valor.equals("=") || Token.Valor.equals("-") 
-            ||Token.Valor.equals(">") || Token.Valor.equals("=>")
+            ||Token.Valor.equals(">") || Token.Valor.equals(">=")
             ||Token.Valor.equals("<") || Token.Valor.equals("<=")) 
        {
             OPERADORESBOOLEANOS();
@@ -2321,12 +2429,18 @@ public class FormPrincipal extends javax.swing.JFrame {
         } else {
             errorsintactico("; " + "GO ", Token.Linea, Token.PI);
         }
+        
+        Prueba = false;
     }
 
     public void FINALA() {
+        
+       if(Token != null)
+       {
         if (Token.Valor.equals("GO")) {
             emparejar("GO");
         }
+       }
     }
 
     //Método que escribe la salida del archivo .out
