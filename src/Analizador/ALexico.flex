@@ -70,12 +70,12 @@ OUTPUT|ZONE|EXCEPTION {lexeme = yytext(); line = yyline; initialcolumn = yycolum
 ("/*"[^\r\n.*]*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 //("/*"([^*/])*) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return ComentarioE;}
 
-/*VARIABLE TIPO BIT*/
-(0|1|NULL) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Bit;}
-
 /*VARIABLE TIPO INT*/
 ({Numero}) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Int;}
 ("-"{Numero})|("+"{Numero}) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Int;}
+
+/*VARIABLE TIPO BIT*/
+(0|1|NULL) {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return Bit;}
 
 /*VARIABLE TIPO STRING*/
 ("'"([^'\r\n])*"'") {lexeme=yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength()-1; return String;}

@@ -14,10 +14,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import jdk.nashorn.internal.parser.Token;
 
@@ -34,8 +38,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
     }
-    
-    List<String> SintactiList = new ArrayList<String>();
+    public Queue<TOKEN> SintacticList = new LinkedList<TOKEN>();
+    public TOKEN Token = new TOKEN();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -94,14 +98,13 @@ public class FormPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAnalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarActionPerformed
-       
+
         //Se crea el cuadro de dialogo donde se obtendra el archivo Mini-SQL
         JFileChooser chooser = new JFileChooser();
         //Se aplica un filtro para que solo se reconozcan los archivos .MiniSQL
-        FileNameExtensionFilter MiniSQLFilter = new FileNameExtensionFilter("Archivos con Extensión MiniSQL", "minisql"); 
+        FileNameExtensionFilter MiniSQLFilter = new FileNameExtensionFilter("Archivos con Extensión MiniSQL", "minisql");
         chooser.setFileFilter(MiniSQLFilter);
         chooser.showOpenDialog(null);
-
 
         try {
             //Se crea un lector con el cual se leéra el archivo seleccionado
@@ -112,86 +115,89 @@ public class FormPrincipal extends javax.swing.JFrame {
             Alexico lexer = new Alexico(lector);
             //se crea una variable para el resultado
             String resultado = "";
+            //Variable para ingresar los objetos al analizador sintáctico
+            TOKEN Taux = new TOKEN();
 
-            while (true) 
-            {
+            while (true) {
                 //se crea una instancia de la clase tokens
                 Tokens tokens = lexer.yylex();
-                if (tokens == null) 
-                {
+                if (tokens == null) {
                     //Se concatena la palabra FIN cuando ya se finalizó el proceso
                     resultado += "FIN";
                     //Se coloca el texto en el JTextPanel
                     txtResultado.setText(resultado);
                     //Se manda a escribir la salida en un archivo de texto
-                    EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql"," "), txtruta.getText(), resultado);
+                    //EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql", " "), txtruta.getText(), resultado);
+                    //Se envía al analizador sintáctico.
+                    AnalizadorSintactico();
                     return;
                 }
                 switch (tokens) {
-                    
+
                     case ERROR:
-                        resultado += "ERROR, Simbolo: "+lexer.lexeme+" no definido en el lenguaje" +"\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                        resultado += "ERROR, Simbolo: " + lexer.lexeme + " no definido en el lenguaje" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
                         break;
-                        
-                    case Identificador: 
-                        
-                        if(lexer.lexeme.length() > 31)
-                        {
+
+                    case Identificador:
+
+                        if (lexer.lexeme.length() > 31) {
                             //Si el identificador es mayor a 31 caracteres
-                            resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                             SintactiList.add(lexer.lexeme);
-                        }
-                        else
-                        {
+                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
+                            SintacticList.add(Taux);
+                        } else {
                             //Si el identificador cumple con las reglas
-                            resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme+ " Es un " + tokens + "\n" + "Linea: "+lexer.line +"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            SintactiList.add(lexer.lexeme);
+                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es un " + tokens + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
+                            SintacticList.add(Taux);
                         }
                         break;
-                        
+
                     case Reservadas:
                         //Si es una palabra reservada
-                        resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: "+lexer.line+"  "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                        SintactiList.add(lexer.lexeme);
+                        resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: " + lexer.line + "  " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
+                        SintacticList.add(Taux);
                         break;
-                        
+
                     case StringE:
-                        resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                         SintactiList.add(lexer.lexeme);
+                        resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
                         break;
-                 
-                    case Int: case String: case Float: case Bit:
-                         resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                         SintactiList.add(lexer.lexeme);
-                         break;
-                        
-                    case Comentario: 
-                          //quitar comentario
-                         // resultado += "Comentario multilinea o simple" + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+
+                    case Int:
+                    case String:
+                    case Float:
+                    case Bit:
+                        resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es un " + tokens + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
+                        SintacticList.add(Taux);
                         break;
-                        
+
+                    case Comentario:
+                        //quitar comentario
+                        // resultado += "Comentario multilinea o simple" + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                        break;
+
                     case ComentarioE:
                         //quitar comentario
-                        resultado += "ERROR, el comentario no posee el operador de cierre"+ "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n"; 
-                    break;     
-                        
+                        resultado += "ERROR, el comentario no posee el operador de cierre" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        break;
+
                     default:
-                        if(tokens.toString().contains("_"))
-                        {
+                        if (tokens.toString().contains("_")) {
                             String temporal = tokens.toString().replace("_", " ");
-                            resultado += "TOKEN " +":"+" El elemento: "+lexer.lexeme + " Es " + temporal + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                             SintactiList.add(lexer.lexeme);
-                        }
-                        else
-                        {
-                            resultado += "TOKEN " +":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            SintactiList.add(lexer.lexeme);
+                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es " + temporal + "\n" + "Linea: " + lexer.line + "    " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
+                            SintacticList.add(Taux);
+                        } else {
+                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es  " + tokens + "\n" + "Linea: " + lexer.line + "    " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
+                            SintacticList.add(Taux);
                         }
                         break;
                 }
             }
-            
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FormPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -199,34 +205,2150 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
-    
-    public final void emparejar(String Tokesperado)
-    {
-      
+    public void AnalizadorSintactico() {
+        
+        Token = SintacticList.remove();
+        while(SintacticList.size() != 0) 
+        {
+            INICIAL();
+        }
+        JOptionPane.showMessageDialog(null, "Análisis Sintáctico Completado Exitosamente", "Análisis Sintáctico", JOptionPane.OK_OPTION);
+    }
+
+    public final void emparejar(String Tokesperado) {
+        if (Tokesperado.equals(Token.Valor)) {
+            Token = SintacticList.poll();
+        } else {
+            errorsintactico(Tokesperado,Token.Linea, Token.PI);
+        }
+    }
+
+    //List<String> tokesperado
+    public void errorsintactico(Object tokesperado, int linea, int PI) {
+        //Funcion para desapilar hasta encontrar el ; o el GO
+        desencolar();
+        JOptionPane.showMessageDialog(null, "Error en la expresión, Linea: " + (linea + 1) + ", Columna: "+PI+ " se esperaba los siguientes Token(s)" + tokesperado, "ERROR SINTÁCTICO", JOptionPane.WARNING_MESSAGE);
+        //Mostrar el error tambien en el Jtextpanel
+        txtResultado.setText("");
+    }
+
+    //Método que desencola hasta encontrar un ; o un GO
+    public void desencolar() {
+        boolean finalexpresion = false;
+
+        while (finalexpresion == false) {
+
+            if (Token.Valor.equals(";") || Token.Valor.equals("GO")) {
+                SintacticList.poll();
+                finalexpresion = true;
+                break;
+            } else {
+                Token = SintacticList.poll();
+            }
+        }
+
+        if (Token.Valor.equals(";") || Token.Valor.equals("GO")) {
+            SintacticList.poll();
+        }
+    }
+
+    //Método en donde inicia la gramática
+    public void INICIAL() {
+        if (Token.Valor.equals("ALTER") || Token.Valor.equals("CREATE") || Token.Valor.equals("DELETE") | Token.Valor.equals("DROP") || Token.Valor.equals("INSERT") || Token.Valor.equals("SELECT") || Token.Valor.equals("TRUNCATE") || Token.Valor.equals("UPDATE")) {
+            INICIALA();
+            FINAL();
+
+        } else {
+            errorsintactico("ALTER " + "CREATE " + "DELETE " + "DROP " + "INSERT " + "SELECT " + "TRUNCATE " + "UPDATE ", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void INICIALA() {
+        if (Token.Valor.equals("ALTER")) {
+            ALTER();
+        }
+        else if (Token.Valor.equals("CREATE")) {
+            CREATE();
+        }
+        else if (Token.Valor.equals("DELETE")) {
+            DELETE();
+        }
+        else if (Token.Valor.equals("DROP")) {
+            DROP();
+        }
+        else if (Token.Valor.equals("INSERT")) {
+            INSERT();
+        }
+        else if (Token.Valor.equals("SELECT")) {
+            SELECT();
+        }
+        else if (Token.Valor.equals("TRUNCATE")) {
+            TRUNCATE();
+        }
+        else if (Token.Valor.equals("UPDATE")) {
+            UPDATE();
+        } 
+        else 
+        {
+            errorsintactico("ALTER " + "CREATE " + "DELETE " + "DROP " + "INSERT " + "SELECT " + "TRUNCATE " + "UPDATE ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void ALIAS() {
+
+        if (Token.Valor.equals("AS")) {
+            emparejar("AS");
+            ALIASA();
+        } else if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ALIASA();
+        } 
+    }
+
+    public void ALIASA() {
+        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ID();   
+        } else if (Token.Valor.equals("String")) {
+            emparejar("String");
+        } 
+        else {
+            errorsintactico("[ " + "String " + "Identificador ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void FROM() {
+        
+        if(Token.Valor.equals("FROM"))
+        {
+            emparejar("FROM");
+        }
+    }
+
+    public void WHERE() {
+        if(Token.Valor.equals("WHERE"))
+        {
+            emparejar("WHERE");
+            SEARCHCONDITION();
+        }
+    }
+
+    //ALTER
+    public void ALTER() {
+        if (Token.Valor.equals("ALTER")) 
+        {
+            emparejar("ALTER");
+            ALTERA();  
+        } else 
+        {
+            errorsintactico("ALTER ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void ALTERA() {
+        if (Token.Valor.equals("DATABASE")) {
+            ALTERDATABASE();
+        }
+        else if (Token.Valor.equals("TABLE")) {
+            ALTERTABLE();
+        }
+        else if (Token.Valor.equals("VIEW")) {
+            ALTERVIEW();
+        } 
+        else if(Token.Valor.equals("USER"))
+        {
+            ALTERUSER();
+        }
+        else {
+            errorsintactico("DATABASE " + "TABLE " + "VIEW ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void ALTERDATABASE() {
+        
+        if(Token.Valor.equals("DATABASE")){
+            
+            emparejar("DATABASE");
+            ALTERDATABASEA();
+            ALTERDATABASEB();
+        }
+        else {
+            errorsintactico("DATABASE ", Token.Linea, Token.PI);
+        }
     }
     
+    public void ALTERDATABASEA() {
+        
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+        }
+        else if(Token.Valor.equals("CURRENT"))
+        {
+            emparejar("CURRENT");
+        }
+        else
+        {
+            errorsintactico("Identificador " + "CURRENT ", Token.Linea, Token.PI);
+        }
+            
+    }
+    
+    public void ALTERDATABASEB() {
+        if(Token.Valor.equals("COLLATE"))
+        {
+            emparejar("COLLATE");
+            ID();
+        }
+        else if(Token.Valor.equals("SET"))
+        {
+            emparejar("SET");
+            emparejar("ROLLBACK");
+            emparejar("INMEDIATE");
+        }
+        else
+        {
+            errorsintactico("COLLATE " + "SET ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void ALTERTABLE() {
+
+        if(Token.Valor.equals("TABLE"))
+        {
+            emparejar("TABLE");
+            OBJECT3();
+            ALTERTABLEA();
+        }
+        else
+        {
+            errorsintactico("TABLE ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALTERTABLEA() {
+
+        if(Token.Valor.equals("ALTER"))
+        {
+            ALTERTABLECOLUMN();
+        }
+        else if(Token.Valor.equals("ADD"))
+        {
+            emparejar("ADD");
+            CNC();
+            CNCA();
+        }
+        else if(Token.Valor.equals("DROP"))
+        {
+            ALTERTABLEDROP();
+        }
+        else
+        {
+            errorsintactico("ALTER " + "ADD " + "DROP ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALTERTABLECOLUMN() {
+        if(Token.Valor.equals("ALTER"))
+        {
+            emparejar("ALTER");
+            emparejar("COLUMN");
+            emparejar("Identificador");
+            ALTERTABLECOLUMNC();
+        }
+        else
+        {
+            errorsintactico("ALTER ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALTERTABLECOLUMNA() {
+        if(Token.Valor.equals("VARCHAR") || Token.Valor.equals("INTEGER") || Token.Valor.equals("FLOAT") || 
+           Token.Valor.equals("DATE") || Token.Valor.equals("BIT") || Token.Valor.equals("DOUBLE") ||
+           Token.Valor.equals("CHAR") || Token.Valor.equals("CURSOR") || Token.Valor.equals("NCHAR") || 
+           Token.Valor.equals("REAL") || Token.Valor.equals("TIME") || Token.Valor.equals("INT") ||
+           Token.Valor.equals("DECIMAL") || Token.Valor.equals("SMALLINT") || Token.Valor.equals("NUMERIC"))
+        {
+           TIPODATO();
+           COLUMNDEFA();
+           COLUMNDEFG();
+        }
+        else
+        {
+            errorsintactico("VARCHAR " + "INTEGER " + "FLOAT " + "DATE " + "BIT " + "DOUBLE " + "CHAR " + "CURSOR " + "NCHAR " + "REAL " + "TIME " + "INT " + "DECIMAL " + "SMALLINT " + "NUMERIC ", Token.Linea, Token.PI); 
+        }
+    }
+    
+    public void ALTERTABLECOLUMNC() {
+        if(Token.Valor.equals("VARCHAR") || Token.Valor.equals("INTEGER") || Token.Valor.equals("FLOAT") || 
+           Token.Valor.equals("DATE") || Token.Valor.equals("BIT") || Token.Valor.equals("DOUBLE") ||
+           Token.Valor.equals("CHAR") || Token.Valor.equals("CURSOR") || Token.Valor.equals("NCHAR") || 
+           Token.Valor.equals("REAL") || Token.Valor.equals("TIME") || Token.Valor.equals("INT") ||
+           Token.Valor.equals("DECIMAL") || Token.Valor.equals("SMALLINT") || Token.Valor.equals("NUMERIC"))
+        {
+            ALTERTABLECOLUMNA();
+        }
+        else if (Token.Valor.equals("ADD") || Token.Valor.equals("DROP"))
+        {
+            ALTERTABLECOLUMND();
+            ALTERTABLECOLUMNE();
+        }
+    }
+    
+    public void ALTERTABLECOLUMND() {
+        
+        if(Token.Valor.equals("ADD"))
+        {
+            emparejar("ADD");
+        }
+        else if(Token.Valor.equals("DROP"))
+        {
+            emparejar("DROP");
+        }
+        else
+        {
+            errorsintactico("ADD " + "DROP ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALTERTABLECOLUMNE(){
+        
+        if(Token.Valor.equals("ROWGUIDCOL"))
+        {
+            emparejar("ROWGUIDCOL");
+        }
+        else if (Token.Valor.equals("NOT"))
+        {
+            emparejar("NOT");
+            emparejar("FOR");
+            emparejar("REPLICATION");
+        }
+        else
+        {
+            errorsintactico("ROWGUIDCOL " + "NOT ", Token.Linea, Token.PI);
+        }
+    }
+    
+    
+    public void NULLABLE() {
+        if(Token.Valor.equals("NULL"))
+        {
+            emparejar("NULL");
+        }
+        else if(Token.Valor.equals("NOT"))
+        {
+            emparejar("NOT");
+            emparejar("NULL");
+        }
+    }
+    
+    public void ALTERTABLEDROP() {
+        if(Token.Valor.equals("DROP"))
+        {
+            emparejar("DROP");
+            ALTERTABLEDROPA();
+            ALTERTABLEDROPC();
+        }
+        else
+        {
+            errorsintactico("DROP", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALTERTABLEDROPA() {
+        if(Token.Valor.equals("CONSTRAINT"))
+        {
+            ALTERTABLEDROPB();
+            IFEXIST();
+            ID();
+        }
+        else if(Token.Valor.equals("IF"))
+        {
+            IFEXIST();
+            ID();
+        }
+        else if(Token.Valor.equals("COLUMN"))
+        {
+            emparejar("COLUMN");
+            IFEXIST();
+            ID();
+        }
+        else
+        {
+            errorsintactico("CONSTRAINT " + "IF " + "COLUMN ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void ALTERTABLEDROPB() {
+        
+        if(Token.Valor.equals("CONSTRAINT"))
+        {
+            emparejar("CONSTRAINT");
+        }
+    }
+    
+    public void ALTERTABLEDROPC() {
+        
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            ALTERTABLEDROPD();
+            ALTERTABLEDROPC();
+        }
+    }
+    
+    public void ALTERTABLEDROPD() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+        }
+        else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("IF"))
+        {
+            ALTERTABLEDROPA();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " + "CONSTRAINT " + "IF ", Token.Linea, Token.PI);
+        }
+    }
+    
+    
+    public void INSERTCOLUMNLIST() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            INSERTCOLUMNLISTA();
+            emparejar(")");
+        }
+    }
+    
+    public void INSERTCOLUMNLISTA() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            INSERTCOLUMNLISTB();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " , Token.Linea, Token.PI);
+        }
+    }
+    
+    public void INSERTCOLUMNLISTB() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            ID();
+            INSERTCOLUMNLISTB();
+        }
+    }
+    
+    public void ALTERVIEW() {
+
+        if(Token.Valor.equals("VIEW"))
+        {
+            emparejar("VIEW");
+            OBJECT2();
+            INSERTCOLUMNLIST();
+            emparejar("AS");
+            SELECT();
+        }
+    }
+
+    public void ALTERUSER() {
+        if(Token.Valor.equals("USER"))
+        {
+            emparejar("USER");
+            emparejar("Identificador");
+        }
+        else
+        {
+            errorsintactico("USER", Token.Linea, Token.PI);
+        }
+    }
+    
+    
+    //CREATE
+    public void CREATE() {
+
+        if (Token.Valor.equals("CREATE")) 
+        {
+            emparejar("CREATE");
+            CREATEA();
+        } 
+        else 
+        {
+            errorsintactico("CREATE", Token.Linea, Token.PI);
+        }
+    }
+
+    public void CREATEA() {
+        
+        if(Token.Valor.equals("TABLE"))
+        {
+            CREATETABLE();
+        }
+        else if(Token.Valor.equals("DATABASE"))
+        {
+            CREATEDATABASE();
+        }
+        else if(Token.Valor.equals("INDEX"))
+        {
+            
+        }
+        else if(Token.Valor.equals("USER"))
+        {
+            CREATEUSER();
+        }
+        else if(Token.Valor.equals("VIEW"))
+        {
+            CREATEVIEW();
+        }
+        else 
+        {
+            errorsintactico("TABLE " + "DATABASE " + "INDEX " + "USER " + "VIEW ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void CREATEUSER() {
+        if(Token.Valor.equals("USER"))
+        {
+            emparejar("USER");
+            emparejar("Identificador");
+        }
+        else 
+        {
+            errorsintactico("USER", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void CREATEDATABASE() {
+        if(Token.Valor.equals("DATABASE"))
+        {
+            emparejar("DATABASE");
+            emparejar("Identificador");
+            CREATEDATABASEA();
+        }
+        else
+        {
+            errorsintactico("DATABASE", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void CREATEDATABASEA() {
+        if(Token.Valor.equals("COLLATE"))
+        {
+            emparejar("COLLATE");
+            emparejar("Identificador");
+        }
+    }
+    
+    public void CREATEVIEW() {
+        if(Token.Valor.equals("VIEW"))
+        {
+            emparejar("VIEW");
+            OBJECT2();
+            emparejar("AS");
+            SELECT();
+        }
+        else
+        {
+            errorsintactico("VIEW", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void CREATETABLE() {
+        if(Token.Valor.equals("TABLE"))
+        {
+            emparejar("TABLE");
+            OBJECT3();
+            emparejar("(");
+            CNC();
+            CNCA();
+            emparejar(")");
+        }
+        else
+        {
+            errorsintactico("TABLE", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void NFR() {
+        if(Token.Valor.equals("NOT"))
+        {
+            emparejar("NOT");
+            emparejar("FOR");
+            emparejar("REPLICATION");
+        }
+    }
+    
+    public void CNC() {
+        
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            COLUMNDEF();
+        }
+        else if(Token.Valor.equals("CONSTRAINT"))
+        {
+            TABLECONSTRAINT();
+        }
+        else if(Token.Valor.equals("INDEX"))
+        {
+            TABLEINDEX();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " + "CONSTRAINT " + "INDEX ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void CNCA(){
+        
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            CNC();
+        }
+    }
+    
+    public void COLUMNDEF() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            TIPODATO();
+            COLUMNDEFA();
+            COLUMNDEFB();
+            COLUMNDEFE();
+            NFR();
+            COLUMNDEFG();
+            COLUMNDEFH();
+            COLUMNCONSTRAINT();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNDEFA() {
+        if(Token.Valor.equals("COLLATE"))
+        {
+            emparejar("COLLATE");
+            ID();
+        }
+    }
+    
+    public void COLUMNDEFB() {
+        if(Token.Valor.equals("CONSTRAINT"))
+        {
+            emparejar("CONSTRAINT");
+            ID();
+            COLUMNDEFC();
+        }
+    }
+    
+    public void COLUMNDEFC() {
+        if(Token.Valor.equals("DEFAULT"))
+        {
+            emparejar("DEFAULT");
+            COLUMNDEFD();
+        }
+    }
+    
+    public void COLUMNDEFD() {
+        if(Token.Valor.equals("Int"))
+        {
+            emparejar("Int");
+        }
+        else if(Token.Valor.equals("Float"))
+        {
+            emparejar("Float");
+        }
+        else if(Token.Valor.equals("String"))
+        {
+            emparejar("String");
+        }
+        else if(Token.Valor.equals("Bit"))
+        {
+            emparejar("Bit");
+        }
+        else if(Token.Valor.equals("NULL"))
+        {
+            emparejar("NULL");
+        }
+        else 
+        {
+            errorsintactico("Int " + "Float " + "String " + "Bit " + "NULL ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNDEFE() {
+        if(Token.Valor.equals("IDENTITY"))
+        {
+            emparejar("IDENTITY");
+            COLUMNDEFE();
+        }
+    }
+    
+    public void COLUMNDEFF() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            emparejar("Int");
+            emparejar(",");
+            emparejar("Int");
+            emparejar(")");
+        }
+    }
+    
+    public void COLUMNDEFG() {
+        if(Token.Valor.equals("NULL"))
+        {
+            emparejar("NULL");
+        }
+        else if(Token.Valor.equals("NOT"))
+        {
+            emparejar("NOT");
+            emparejar("NULL");
+        }
+    }
+    
+    public void COLUMNDEFH() {
+        if(Token.Valor.equals("ROWGUIDCOL"))
+        {
+            emparejar("ROWGUIDCOL");
+        }
+    }
+    
+    // COLUMN CONSTRAINT
+    public void COLUMNCONSTRAINT() {
+        if(Token.Valor.equals("CONSTRAINT"))
+        {
+            COLUMNCONSTRAINTA();
+            COLUMNCONSTRAINTB();
+            COLUMNCONSTRAINT();
+        }
+    }
+    
+    public void COLUMNCONSTRAINTA() {
+        if(Token.Valor.equals("CONSTRAINT"))
+        {
+            emparejar("CONSTRAINT");
+            ID();
+        }
+    }
+    
+    public void COLUMNCONSTRAINTB() {
+        if(Token.Valor.equals("PRIMARY"))
+        {
+            emparejar("PRIMARY");
+            emparejar("KEY");
+            COLUMNCONSTRAINTC();
+        }
+        else if(Token.Valor.equals("UNIQUE"))
+        {
+            emparejar("UNIQUE");
+            COLUMNCONSTRAINTC();
+        }
+        else if(Token.Valor.equals("FOREIGN"))
+        {
+            COLUMNCONSTRAINTD();
+            emparejar("REFERENCES");
+            OBJECT2();
+            COLUMNCONSTRAINTE();
+            COLUMNCONSTRAINTF();
+            NFR();
+        }
+        else if(Token.Valor.equals("CHECK"))
+        {
+            emparejar("CHECK");
+            NFR();
+            emparejar("(");
+            SEARCHCONDITION();
+            emparejar(")");
+        }
+        else
+        {
+            errorsintactico("PRIMARY " + "UNIQUE " + "FOREIGN " + "CHECK ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNCONSTRAINTC() {
+        if(Token.Valor.equals("CLUSTERED"))
+        {
+            emparejar("CLUSTERED");
+        }
+        else if(Token.Valor.equals("NONCLUSTERED"))
+        {
+            emparejar("NONCLUSTERED");
+        }
+    }
+    
+    public void COLUMNCONSTRAINTD() {
+        if(Token.Valor.equals("FOREIGN"))
+        {
+            emparejar("FOREIGN");
+            emparejar("KEY");
+        }
+    }
+    
+    public void COLUMNCONSTRAINTE() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            ID();
+            emparejar(")");
+        }         
+    }
+    
+    public void COLUMNCONSTRAINTF() {
+        if(Token.Valor.equals("ON"))
+        {
+            emparejar("ON");
+            COLUMNCONSTRAINTG();
+            COLUMNCONSTRAINTL();
+        }
+        else
+        {
+            errorsintactico("ON", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNCONSTRAINTG() {
+        if(Token.Valor.equals("DELETE"))
+        {
+            emparejar("DELETE");
+        }
+        else if(Token.Valor.equals("UPDATE"))
+        {
+            emparejar("UPDATE");
+        }
+        else
+        {
+            errorsintactico("DELETE " + "UPDATE ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNCONSTRAINTH() {
+        if(Token.Valor.equals("NULL"))
+        {
+            emparejar("NULL");
+        }
+        else if(Token.Valor.equals("DEFAULT"))
+        {
+            emparejar("DEFAULT");
+        }
+        else
+        {
+            errorsintactico("NULL " + "DEFAULT ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNCONSTRAINTL() {
+        if(Token.Valor.equals("CASCADE"))
+        {
+            emparejar("CASCADE");
+        }
+        else if(Token.Valor.equals("SET"))
+        {
+            emparejar("SET");
+            COLUMNCONSTRAINTH();
+        }
+        else if(Token.Valor.equals("NO"))
+        {
+            emparejar("NO");
+            emparejar("ACTION");
+        }
+        else
+        {
+            errorsintactico("CASCADE " + "SET " + "NO ", Token.Linea, Token.PI);
+        }
+    }
+    
+    //TABLE CONSTRAINT
+    public void TABLECONSTRAINT() {
+        if(Token.Valor.equals("CONSTRAINT"))
+        {
+            COLUMNCONSTRAINTA();
+            TABLECONSTRAINTA();
+        }
+        else 
+        {
+            errorsintactico("CONSTRAINT",  Token.Linea, Token.PI);
+        }
+    }
+    
+    public void TABLECONSTRAINTA() {
+        if(Token.Valor.equals("PRIMARY"))
+        {
+            emparejar("PRIMARY");
+            emparejar("KEY");
+            COLUMNCONSTRAINTC();
+            TABLECONSTRAINTB();
+        }
+        else if(Token.Valor.equals("UNIQUE"))
+        {
+            emparejar("UNIQUE");
+            COLUMNCONSTRAINTC();
+        }
+        else if(Token.Valor.equals("FOREIGN"))
+        {
+            emparejar("FOREIGN");
+            emparejar("KEY");
+            TABLECONSTRAINTD();
+            emparejar("REFERENCES");
+            OBJECT2();
+            COLUMNCONSTRAINTE();
+            COLUMNCONSTRAINTF();
+            NFR();
+        }
+        else if(Token.Valor.equals("CHECK"))
+        {
+            emparejar("CHECK");
+            NFR();
+            emparejar("(");
+            SEARCHCONDITION();
+            emparejar(")");
+        }
+        else 
+        {
+            errorsintactico("PRIMARY " + "UNIQUE " + "FOREIGN " + "CHECK ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void TABLECONSTRAINTB() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            ID();
+            ORDERB();
+            TABLECONSTRAINTC();
+            emparejar(")");
+        }
+        else 
+        {
+            errorsintactico("(", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void TABLECONSTRAINTC() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            ID();
+            ORDERB();
+            TABLECONSTRAINTC();
+        }
+    }
+    
+    public void TABLECONSTRAINTD() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            ID();
+            TABLECONSTRAINTE();
+            emparejar(")");
+        }
+        else
+        {
+            errorsintactico("(", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void TABLECONSTRAINTE() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            ID();
+            TABLECONSTRAINTE();
+        }
+    }
+    
+    public void TABLEINDEX() {
+        if(Token.Valor.equals("INDEX"))
+        {
+            emparejar("INDEX");
+            ID();
+            COLUMNCONSTRAINTC();
+            TABLECONSTRAINTB();
+        }
+        else
+        {
+            errorsintactico("INDEX", Token.Linea, Token.PI);
+        }
+    }
+    
+    //DELETE
+    public void DELETE() {
+
+        if (Token.Valor.equals("DELETE")) {
+            emparejar("DELETE");
+            TOP();
+            FROM();
+            DELETEA();
+        } else {
+            errorsintactico("DELETE", Token.Linea, Token.PI);
+        }
+    }
+
+    public void TOP() {
+
+        if (Token.Valor.equals("TOP")) {
+            emparejar("TOP");
+            emparejar("(");
+            emparejar("Int");
+            emparejar(")");
+            TOPA();
+        }
+    }
+
+    public void TOPA() {
+        
+        if(Token.Valor.equals("PERCENT"))
+        {
+            emparejar("PERCENT");
+        }
+    }
+
+    public void DELETEA() {
+        
+        if(Token.Valor.equals("OPENQUERY"))
+        {
+            emparejar("OPENQUERY");
+            SERVER();
+        }
+        else if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            OBJECT3();
+            DELETEB();
+            WHERE();
+        }
+        else
+        {
+            errorsintactico("OPENQUERY " + "Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void DELETEB() {
+        if(Token.Valor.equals("FROM"))
+        {
+            emparejar("FROM");
+            OBJECT3();
+            DELETEC();
+        }
+    }
+    
+    public void DELETEC() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            OBJECT3();
+            DELETEC();
+        }
+    }
+
+    public void SERVER() {
+        if(Token.Valor.equals("("))
+        {
+          emparejar("(");
+          ID();
+          emparejar(",");
+          emparejar("String");
+          emparejar(")");
+        }
+        else
+        {
+            errorsintactico("(", Token.Linea, Token.PI);
+        }
+    }
+    
+    //TIPO DE DATO
+    public void TIPODATO() {
+        if (Token.Valor.equals("VARCHAR") || Token.Valor.equals("FLOAT") || Token.Valor.equals("DATE") || 
+            Token.Valor.equals("BIT") || Token.Valor.equals("DOUBLE") || Token.Valor.equals("CHAR") || 
+            Token.Valor.equals("CURSOR") || Token.Valor.equals("NCHAR") || Token.Valor.equals("REAL") || 
+            Token.Valor.equals("TIME") || Token.Valor.equals("INT") || Token.Valor.equals("INTEGER") || 
+            Token.Valor.equals("DECIMAL") || Token.Valor.equals("SMALLINT") || Token.Valor.equals("NUMERIC") || Token.Valor.equals("[")) {
+            TIPODATOD();
+            TIPODATOB();
+        }
+        else
+        {
+            errorsintactico("VARCHAR " + "FLOAT " + "DATE " + "BIT " + "DOUBLE " + "CHAR " + "CURSOR " + "NCHAR " + "REAL " + "TIME " + "INT " + "INTEGER " + "DECIMAL " + "SMALLINT " +"NUMERIC " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+  
+    public void TIPODATOA() {
+        if(Token.Valor.equals("VARCHAR"))
+        {
+            emparejar("VARCHAR");
+        }
+        else if(Token.Valor.equals("FLOAT"))
+        {
+            emparejar("FLOAT");
+        }
+        else if(Token.Valor.equals("DATE"))
+        {
+            emparejar("DATE");
+        }
+        else if(Token.Valor.equals("BIT"))
+        {
+            emparejar("BIT");
+        }
+        else if(Token.Valor.equals("DOUBLE"))
+        {
+            emparejar("DOUBLE");
+        }
+        else if(Token.Valor.equals("CHAR"))
+        {
+            emparejar("CHAR");
+        }
+        else if(Token.Valor.equals("CURSOR"))
+        {
+            emparejar("CURSOR");
+        }
+        else if(Token.Valor.equals("NCHAR"))
+        {
+            emparejar("NCHAR");
+        }
+        else if (Token.Valor.equals("REAL"))
+        {
+            emparejar("REAL");
+        }
+        else if(Token.Valor.equals("TIME"))
+        {
+            emparejar("TIME");
+        }
+        else if(Token.Valor.equals("INT"))
+        {
+            emparejar("INT");
+        }
+        else if(Token.Valor.equals("INTEGER"))
+        {
+            emparejar("INTEGER");
+        }
+        else if(Token.Valor.equals("DECIMAL"))
+        {
+            emparejar("DECIMAL");
+        }
+        else if(Token.Valor.equals("SMALLINT"))
+        {
+            emparejar("SMALLINT");
+        }
+        else if(Token.Valor.equals("NUMERIC"))
+        {
+            emparejar("NUMERIC");
+        }
+        else 
+        {
+            errorsintactico("VARCHAR " + "FLOAT " + "DATE " + "BIT " + "DOUBLE " + "CHAR " + "CURSOR " + "NCHAR " + "REAL " + "TIME " + "INTEGER " + "DECIMAL " + "SMALLINT " +"NUMERIC ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void TIPODATOB() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            emparejar("Int");
+            TIPODATOC();
+            emparejar(")");    
+        }
+        
+    }
+    
+    public void TIPODATOC() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            emparejar("Int");
+        }
+    }
+    
+    public void TIPODATOD() {
+        if(Token.Valor.equals("VARCHAR") || Token.Valor.equals("FLOAT") || Token.Valor.equals("DATE") || 
+            Token.Valor.equals("BIT") || Token.Valor.equals("DOUBLE") || Token.Valor.equals("CHAR") || 
+            Token.Valor.equals("CURSOR") || Token.Valor.equals("NCHAR") || Token.Valor.equals("REAL") || 
+            Token.Valor.equals("TIME") || Token.Valor.equals("INT") || Token.Valor.equals("INTEGER") || 
+            Token.Valor.equals("DECIMAL") || Token.Valor.equals("SMALLINT") || Token.Valor.equals("NUMERIC"))
+        {
+            TIPODATOA();
+        }
+        else if (Token.Valor.equals("["))
+        {
+            emparejar("[");
+            TIPODATOA();
+            emparejar("]");
+        }
+    }
+    
+    //DROP
+    public void DROP() {
+
+        if (Token.Valor.equals("DROP")) {
+            emparejar("DROP");
+            DROPA();
+        } else {
+            errorsintactico("DROP", Token.Linea, Token.PI);
+        }
+    }
+
+    public void DROPA() {
+        if (Token.Valor.equals("TABLE")) {
+            DROPTABLE();
+        } else if (Token.Valor.equals("VIEW")) {
+            DROPVIEW();
+        } else if (Token.Valor.equals("DATABASE")) {
+            DROPDATABASE();
+        } else if (Token.Valor.equals("INDEX")) {
+            DROPINDEX();
+        } else if (Token.Valor.equals("USER")) {
+            DROPUSER();
+        } else {
+
+            errorsintactico("TABLE " + "VIEW " + "DATABASE " + "INDEX " + "USER", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void DROPTABLE() {
+        if (Token.Valor.equals("TABLE")) {
+            emparejar("TABLE");
+            IFEXIST();
+            OBJECT3();
+            DROPTABLEA();
+        } else {
+            errorsintactico("TABLE", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void IFEXIST() {
+        if (Token.Valor.equals("IF")) {
+            emparejar("IF");
+            emparejar("EXISTS");
+        }
+    }
+
+    public void DROPTABLEA() {
+        if (Token.Valor.equals(",")) {
+            emparejar(",");
+            OBJECT3();
+            DROPTABLEA();
+        }
+    }
+
+    public void DROPVIEW() {
+        if (Token.Valor.equals("VIEW")) {
+            emparejar("VIEW");
+            IFEXIST();
+            OBJECT2();
+            DROPVIEWA();
+        } else {
+            errorsintactico("VIEW", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void OBJECT2() {
+        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ID();
+            OBJECT2A();
+        } else {
+            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void OBJECT2A() {
+        if (Token.Valor.equals(".")) {
+            emparejar(".");
+            ID();
+        }
+    }
+
+    public void DROPVIEWA() {
+        if (Token.Valor.equals(",")) {
+            emparejar(",");
+            OBJECT2();
+            DROPVIEWA();
+        }
+    }
+
+    public void DROPDATABASE() {
+        if (Token.Valor.equals("DATABASE")) {
+            emparejar("DATABASE");
+            IFEXIST();
+            ID();
+            DROPDATABASEA();
+        } else {
+            errorsintactico("DATABASE", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void DROPDATABASEA() {
+        if (Token.Valor.equals(",")) {
+            emparejar(",");
+            ID();
+            DROPDATABASEA();
+        }
+    }
+
+    public void DROPINDEX() {
+        if (Token.Valor.equals("INDEX")) {
+            emparejar("INDEX");
+            IFEXIST();
+            DROPINDEXA();
+            DROPINDEXB();
+        } else {
+            errorsintactico("INDEX", Token.Linea, Token.PI);
+        }
+    }
+
+    public void DROPINDEXA() {
+        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ID();
+            emparejar("ON");
+            OBJECT3();
+        }
+        else
+        {
+            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void DROPINDEXB() {
+        if (Token.Valor.equals(",")) {
+            emparejar(",");
+            DROPINDEXA();
+            DROPINDEXB();
+        }
+
+    }
+
+    public void DROPUSER() {
+        if (Token.Valor.equals("USER")) {
+            IFEXIST();
+            ID();
+        } else {
+            errorsintactico("USER", Token.Linea, Token.PI);
+        }
+    }
+
+    //INSERT
+    public void INSERT() {
+
+        if (Token.Valor.equals("INSERT")) {
+            emparejar("INSERT");
+            TOP();
+            INSERTINTO();
+            OBJECT3();
+            INSERTCOLUMNLIST();
+            INSERTVALUES();
+        } else {
+            errorsintactico("INSERT", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void INSERTEXPRESION() {
+        if(Token.Valor.equals("DEFAULT") || Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL"))
+        {
+            UPDATEB();
+            INSERTEXPRESIONB();
+        }
+        else
+        {
+             errorsintactico("DEFAULT " + "IDENTIFICADOR " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NULL ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void INSERTEXPRESIONB() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            UPDATEB();
+            INSERTEXPRESIONB();
+        }
+    }
+    
+    public void INSERTVALUES() {
+        if(Token.Valor.equals("VALUES"))
+        {
+            emparejar("VALUES");
+            emparejar("(");
+            INSERTEXPRESION();
+            emparejar(")");
+            INSERTVALUESA();   
+        }
+        else if(Token.Valor.equals("DEFAULT"))
+        {
+            emparejar("DEFALUT");
+            emparejar("VALUES");
+        }
+        else 
+        {
+            errorsintactico("VALUES " + "DEFAULT ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void INSERTVALUESA() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            emparejar("(");
+            INSERTEXPRESION();
+            emparejar(")");
+            INSERTVALUESA();
+        }
+    }
+    
+    public void INSERTINTO() {
+        if(Token.Valor.equals("INTO"))
+        {
+            emparejar("INTO");
+        }
+    }
+
+    public void OBJECT3() {
+
+        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ID();
+            OBJECT3A();
+        } else {
+            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void ID() {
+        if (Token.Valor.equals("Identificador")) {
+            emparejar("Identificador");
+        } else if (Token.Valor.equals("[")) {
+            emparejar("[");
+            emparejar("Identificador");
+            emparejar("]");
+        } else {
+            errorsintactico("Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void OBJECT3A() {
+        if (Token.Valor.equals(".")) {
+            emparejar(".");
+            OBJECT2();
+        }
+    }
+
+    //TRUNCATE Y PRODUCCIONES
+    public void TRUNCATE() {
+
+        if (Token.Valor.equals("TRUNCATE")) {
+            emparejar("TRUNCATE");
+            emparejar("TABLE");
+            OBJECT3();
+        } else {
+            errorsintactico("TRUNCATE", Token.Linea, Token.PI);
+        }
+    }
+
+    //UPDATE Y PRODUCCIONES
+    public void UPDATE() {
+
+        if (Token.Valor.equals("UPDATE")) {
+            emparejar("UPDATE");
+            TOP();
+            OBJECT3();
+            emparejar("SET");
+            UPDATEA();
+            FROMUPDATE();
+            WHERE();
+        } else {
+            errorsintactico("UPDATE", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void FROMUPDATE() {
+        if(Token.Valor.equals("FROM"))
+        {
+            emparejar("FROM");
+            OBJECT3();
+            DELETEC();
+        }
+    }
+
+    public void UPDATEA() {
+        
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            emparejar("=");
+            UPDATEB();
+            UPDATEC();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void UPDATEB() {
+        if(Token.Valor.equals("DEFAULT"))
+        {
+            emparejar("DEFAULT");
+        }
+        else if(Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL"))
+        {
+            EXPRESION();
+        }
+        else 
+        {
+            errorsintactico("DEFAULT " + "IDENTIFICADOR " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NULL ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void UPDATEC() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            UPDATEA();
+            UPDATEC();
+        }
+    }
+    
+    //EXPRESIONES
+    public void EXPRESION() {
+       if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT") || Token.Valor.equals("(")) 
+       {
+            EXPRESIONB();
+            EXPRESIONA();
+       }
+       else
+       {
+           errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NULL " + "SUM " + "AVG " + "MIN " + "MAX " + "COUNT " + "( ", Token.Linea, Token.PI);
+       }
+   }
+    
+    public void EXPRESIONES() {
+        
+       if (Token.Valor.equals(",")) 
+       {
+            emparejar(",");
+            EXPRESION();
+            EXPRESIONES();
+       }
+   }
+    
+    public void EXPRESIONA() {
+       if (Token.Valor.equals("+")) 
+       {
+            emparejar("+"); 
+            EXPRESIONB();
+            EXPRESIONA();
+
+       }else if (Token.Valor.equals("-")) 
+       {
+            emparejar("-"); 
+            EXPRESIONB();
+            EXPRESIONA();
+       }
+   }
+    
+    public void EXPRESIONB() {
+       if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT")) 
+       {
+            EXPRESIOND();
+            EXPRESIONC();
+       }
+       else
+       {
+           errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NULL " + "SUM " + "AVG " + "MIN " + "MAX " + "COUNT ", Token.Linea, Token.PI);
+       }
+   }
+    
+    public void EXPRESIONC() {
+       if (Token.Valor.equals("*")) 
+       {
+            emparejar("*"); 
+            EXPRESIOND();
+            EXPRESIONC();
+       }
+       else if (Token.Valor.equals("/")) 
+       {
+            emparejar("/"); 
+            EXPRESIOND();
+            EXPRESIONC();
+       }
+   }
+    
+    public void EXPRESIOND() {
+       if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT")) 
+       {
+           EXPRESIONE(); 
+       }
+       else if (Token.Valor.equals("(")) 
+       {
+           emparejar("(");
+           EXPRESION();
+           emparejar(")");
+        }
+       else
+       {
+           errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NULL " + "SUM " + "AVG " + "MIN " + "MAX " + "COUNT ", Token.Linea, Token.PI);
+       }
+   }
+    
+    public void EXPRESIONE() {
+        
+        if (Token.Valor.equals("Identificador") || Token.Valor.equals("[")) 
+        {
+            OBJECT4(); 
+        }
+        else if (Token.Valor.equals("Bit") || Token.Valor.equals("Int") || Token.Valor.equals("Float")
+                || Token.Valor.equals("String") || Token.Valor.equals("@") || Token.Valor.equals("NULL")) 
+        {
+            CONSTANTE();
+        }
+        else if(Token.Valor.equals("SUM"))
+        {
+            emparejar("SUM");
+            emparejar("(");
+            EXPRESIONF();
+        }
+        else if(Token.Valor.equals("AVG"))
+        {
+            emparejar("AVG");
+            emparejar("(");
+            EXPRESIONF();
+        }
+        else if(Token.Valor.equals("MIN"))
+        {
+            emparejar("MIN");
+            emparejar("(");
+            EXPRESIONF();
+        }
+        else if(Token.Valor.equals("MAX"))
+        {
+            emparejar("MAX");
+            emparejar("(");
+            EXPRESIONF();
+        }
+        else if(Token.Valor.equals("COUNT"))
+        {
+            emparejar("COUNT");
+            emparejar("(");
+            EXPRESIONF();
+        }
+       else
+       {
+           errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "NULL ", Token.Linea, Token.PI);
+       }
+   }
+    
+    public void EXPRESIONF() {
+        if(Token.Valor.equals("Int"))
+        {
+            emparejar("Int");
+            emparejar(")");
+        }
+        else if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            OBJECT4();
+            emparejar(")");
+        }
+        else
+        {
+            errorsintactico("Int " + "Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void OBJECT4() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            OBJECT4A();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " , Token.Linea, Token.PI);
+        }
+    }
+    
+    public void OBJECT4A() {
+        if (Token.Valor.equals(".")) {
+            emparejar(".");
+            OBJECT3();
+        }
+    }
+    
+    public void CONSTANTE() {
+     if(Token.Valor.equals("Bit"))
+     {
+         emparejar("Bit");
+     }
+     else if(Token.Valor.equals("Int"))
+     {
+         emparejar("Int");
+     }
+     else if(Token.Valor.equals("Float"))
+     {
+         emparejar("Float");
+     }
+     else if(Token.Valor.equals("String"))
+     {
+         emparejar("String");
+     }
+     else if(Token.Valor.equals("@"))
+     {
+         VARIABLE();
+     }
+     else if(Token.Valor.equals("NULL"))
+     {
+         emparejar("NULL");
+     }
+     else 
+     {
+         errorsintactico("Bit " + "Int " + "Float " + "String " + "@ ", Token.Linea, Token.PI);
+     }
+   }
+   
+    public void VARIABLE() {
+       if(Token.Valor.equals("@"))
+       {
+          emparejar("@"); 
+          emparejar("Identificador");
+       }
+       else
+       {
+           errorsintactico("@ " + "Identificador ", Token.Linea, Token.PI);
+       }
+   }
+    
+    public void SELECTCOLUMNS() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT") || Token.Valor.equals("("))
+        {
+            EXPRESION();
+            ALIAS();
+            SELECTCOLUMNSA();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NULL " + "SUM " + "AVG " + "MIN " + "MAX " + "COUNT ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void SELECTCOLUMNSA() {
+        if(Token.Valor.equals(","))
+        {
+           emparejar(",");
+           EXPRESION();
+           ALIAS();
+           SELECTCOLUMNSA();
+        }
+    }
+    
+    public void COLUMNLIST() {
+        if(Token.Valor.equals("("))
+        {
+            emparejar("(");
+            COLUMNLISTA();
+            emparejar(")");
+        }
+        else
+        {
+            errorsintactico("(", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNLISTA() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            COLUMNLISTB();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " , Token.Linea, Token.PI);
+        }
+    }
+    
+    public void COLUMNLISTB() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            ID();
+            COLUMNLISTB();
+        }
+        
+    }
+    
+    //SELECT
+    public void SELECT() {
+        if(Token.Valor.equals("SELECT"))
+        {
+            emparejar("SELECT");
+            SELECTA();
+            TOP();
+            SELECTCOLUMNS();
+            FROMSELECT();
+            WHERE();
+            GROUPBY();
+            HAVING();
+            ORDERBY();
+        }
+        else
+        {
+            errorsintactico("SELECT", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void SELECTA() {
+        if(Token.Valor.equals("ALL"))
+        {
+            emparejar("ALL");
+        }
+        else if(Token.Valor.equals("DISTINCT"))
+        {
+            emparejar("DISTINCT");
+        }
+    }
+    
+    public void GROUPBY() {
+            
+        if(Token.Valor.equals("GROUP"))
+        {
+            emparejar("GROUP");
+            emparejar("BY");
+            OBJECT4();
+            GROUPBYA();
+        }
+    }
+    
+    public void GROUPBYA() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            OBJECT4();
+        }
+    }
+
+    public void HAVING() {
+        if(Token.Valor.equals("HAVING"))
+        {
+            emparejar("HAVING");
+            SEARCHCONDITION();
+        }
+    }
+
+    public void ORDERBY() {
+        
+        if(Token.Valor.equals("ORDER"))
+        {
+            emparejar("ORDER");
+            emparejar("BY");
+            OBJECT4();
+            ORDERA();
+            ORDERB();
+            ORDERC();
+        }
+    }
+
+    public void ORDERA() {
+        if(Token.Valor.equals("COLLATE"))
+        {
+            emparejar("COLLATE");
+            ID();
+        }
+    }
+    
+    public void ORDERB() {
+       if(Token.Valor.equals("ASC"))
+       {
+           emparejar("ASC");
+       }
+       else if(Token.Valor.equals("DESC"))
+       {
+           emparejar("DESC");
+       }
+    }
+    
+    public void ORDERC() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            OBJECT4();
+            ORDERA();
+            ORDERB();
+        }
+    }
+    
+    //FROM SELECT
+    public void FROMSELECT() {
+        if(Token.Valor.equals("FROM"))
+        {
+            emparejar("FROM");
+            OBJECT3();
+            ALIAS();
+            JOIN();
+            FROMSELECTA();
+        }
+    }
+   
+    public void FROMSELECTA() {
+        if(Token.Valor.equals(","))
+        {
+            emparejar(",");
+            OBJECT3();
+            ALIAS();
+            JOIN();
+        }
+    }
+    
+    public void JOIN() {
+        if(Token.Valor.equals("INNER") || Token.Valor.equals("RIGHT") || 
+           Token.Valor.equals("LEFT") || Token.Valor.equals("FULL"))
+        {
+           TYPE();
+           emparejar("JOIN");
+           OBJECT3();
+           ALIAS();
+           emparejar("ON");
+           SEARCHCONDITION();
+           JOIN();
+        }
+    }
+    
+    public void TYPE() {
+        if(Token.Valor.equals("INNER"))
+        {
+            emparejar("INNER");
+        }
+        else if(Token.Valor.equals("RIGHT"))
+        {
+            emparejar("RIGHT");
+            OUTER();
+        }
+        else if(Token.Valor.equals("LEFT"))
+        {
+            emparejar("LEFT");
+            OUTER();
+        }
+        else if(Token.Valor.equals("FULL"))
+        {
+            emparejar("FULL");
+            OUTER();
+        }
+    }
+    
+    public void OUTER() {
+        if(Token.Valor.equals("OUTER"))
+        {
+            emparejar("OUTER");
+        }
+    }
+    
+    //OPERADORES BOOLEANOS
+    public void OPERADORESBOOLEANOS() {
+       if(Token.Valor.equals("="))
+       {
+           emparejar("=");
+       }
+       else if(Token.Valor.equals("!="))
+       {
+           emparejar("!=");
+       }
+       else if(Token.Valor.equals(">"))
+       {
+           emparejar(">");
+       }
+       else if(Token.Valor.equals(">="))
+       {
+           emparejar(">=");
+       }
+       else if(Token.Valor.equals("<"))
+       {
+           emparejar("<");
+       }
+       else if(Token.Valor.equals("<="))
+       {
+           emparejar("<=");
+       }
+   }
+    
+    //PREDICADO
+    public void NOTPREDICADO() {
+       if (Token.Valor.equals("NOT")) 
+       {
+            emparejar("NOT"); 
+       }
+   }
+    
+    public void PREDICADO() {
+       if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT") || Token.Valor.equals("(")) 
+       {
+            EXPRESION();
+            PREDICADOA();
+       }else
+       {
+          errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( ", Token.Linea, Token.PI);
+       }
+   }
+    
+    public void PREDICADOA() {
+       if (Token.Valor.equals("=") || Token.Valor.equals("-") 
+            ||Token.Valor.equals(">") || Token.Valor.equals("=>")
+            ||Token.Valor.equals("<") || Token.Valor.equals("<=")) 
+       {
+            OPERADORESBOOLEANOS();
+            EXPRESION();
+       }
+       else if (Token.Valor.equals("NOT") || Token.Valor.equals("IN") || Token.Valor.equals("BETWEEN") || Token.Valor.equals("LIKE")) 
+       {
+           NOTPREDICADO(); 
+           PREDICADOB();
+
+       }
+       else if (Token.Valor.equals("BETWEEN") || Token.Valor.equals("IN") || Token.Valor.equals("LIKE")) 
+       {
+           PREDICADOB();    
+       }
+       else if (Token.Valor.equals("IS")) 
+       {
+           emparejar("IS");
+           NOTPREDICADO(); 
+           emparejar("NULL");
+       }
+       else
+       {
+           errorsintactico("=   " + "-  " + ">  " + "=> " + "<  " + "<= " + "NOT    " + "BETWEEN    " + "IN " + "LIKE   " + "IS " , Token.Linea, Token.PI);
+       }
+   }
+    
+    public void PREDICADOB() {
+       if (Token.Valor.equals("BETWEEN")) 
+       {
+           emparejar("BETWEEN"); 
+           EXPRESION();
+           emparejar("AND");
+           EXPRESION();
+            
+       }
+       else if (Token.Valor.equals("IN")) 
+       {
+           emparejar("IN"); 
+           emparejar("(");
+           EXPRESION();
+           EXPRESIONES();
+           emparejar(")");
+
+       }
+       else if (Token.Valor.equals("LIKE")) 
+       {
+           emparejar("LIKE"); 
+           EXPRESION();
+
+       }
+       else
+       {
+           errorsintactico("BETWEEN " + "IN " + "LIKE " , Token.Linea, Token.PI);
+       }
+   }
+    
+    //SEARCHCONDITION
+    public void SEARCHCONDITION() {
+       if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
+            || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
+            Token.Valor.equals("@")|| Token.Valor.equals("(") || Token.Valor.equals("NULL") || Token.Valor.equals("SUM")
+            || Token.Valor.equals("AVG") || Token.Valor.equals("MIN") || Token.Valor.equals("MAX") || Token.Valor.equals("COUNT") ||
+            Token.Valor.equals("(")) 
+       {
+           PREDICADO();
+           SEARCHCONDITIONA();
+       }
+       else if(Token.Valor.equals("NOT"))
+       {
+           emparejar("NOT");
+           PREDICADO();
+           SEARCHCONDITIONA();
+       
+       }
+       else
+       {
+           errorsintactico("Identificador " + "[ " + "Bit " + "Int " + "Float " + "String " + "@ " + "( " + "NOT ", Token.Linea, Token.PI);
+       }
+   }
+    
+    private void SEARCHCONDITIONA() {
+       if (Token.Valor.equals("AND")) 
+       {
+           emparejar("AND");
+           SEARCHCONDITION();
+           SEARCHCONDITIONA();
+       }else if(Token.Valor.equals("OR"))
+       {
+           emparejar("OR");
+           SEARCHCONDITION();
+           SEARCHCONDITIONA();
+       }
+   }
+
+    
+    //FINAL
+    public void FINAL() {
+
+        if (Token.Valor.equals(";")) {
+            emparejar(";");
+            FINALA();
+
+        } else if (Token.Valor.equals("GO")) {
+            emparejar("GO");
+
+        } else {
+            errorsintactico("; " + "GO ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void FINALA() {
+        if (Token.Valor.equals("GO")) {
+            emparejar("GO");
+        }
+    }
+
     //Método que escribe la salida del archivo .out
-    public void EscribirSalida(String Nombre, String ruta, String Contenido) throws IOException
-    {
+    public void EscribirSalida(String Nombre, String ruta, String Contenido) throws IOException {
         //Se reemplaza el salto de línea por un salto de Línea que reconozca el BufferedWriter
         Contenido = Contenido.replace("\n", "\r\n");
         //Se reemplaza la extension del archivo
         ruta = ruta.replace(".minisql", ".out");
         File archivo = new File(ruta);
         BufferedWriter bw;
-        
-        if(archivo.exists()) 
-        {
+
+        if (archivo.exists()) {
             bw = new BufferedWriter(new FileWriter(archivo));
             bw.write(Contenido);
         } else {
             bw = new BufferedWriter(new FileWriter(archivo));
             bw.write(Contenido);
         }
-        bw.close();   
-        
+        bw.close();
+
     }
-    
+
     /**
      * @param args the command line arguments
      */
