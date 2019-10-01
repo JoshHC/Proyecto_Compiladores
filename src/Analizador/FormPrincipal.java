@@ -263,7 +263,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
 
     }
-
+    
     public void INICIALA() {
         if (Token.Valor.equals("ALTER")) {
             ALTER();
@@ -295,6 +295,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
 
+    //ALIAS
     public void ALIAS() {
 
         if (Token.Valor.equals("AS")) {
@@ -304,7 +305,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             ALIASA();
         } 
     }
-
+    
     public void ALIASA() {
         if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
             ID();   
@@ -316,14 +317,14 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
-    public void ALIASSPACE()
-    {
+    public void ALIASSPACE() {
         if(Token.Valor.equals(" "))
         {
             emparejar(" ");
         }
     }
 
+    //FROM
     public void FROM() {
         
         if(Token.Valor.equals("FROM"))
@@ -332,6 +333,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
 
+    //WHERE
     public void WHERE() {
         if(Token.Valor.equals("WHERE"))
         {
@@ -536,19 +538,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
-    
-    public void NULLABLE() {
-        if(Token.Valor.equals("NULL"))
-        {
-            emparejar("NULL");
-        }
-        else if(Token.Valor.equals("NOT"))
-        {
-            emparejar("NOT");
-            emparejar("NULL");
-        }
-    }
-    
     public void ALTERTABLEDROP() {
         if(Token.Valor.equals("DROP"))
         {
@@ -619,6 +608,43 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    public void ALTERVIEW() {
+
+        if(Token.Valor.equals("VIEW"))
+        {
+            emparejar("VIEW");
+            OBJECT2();
+            INSERTCOLUMNLIST();
+            emparejar("AS");
+            SELECT();
+        }
+    }
+
+    public void ALTERUSER() {
+        if(Token.Valor.equals("USER"))
+        {
+            emparejar("USER");
+            emparejar("Identificador");
+        }
+        else
+        {
+            errorsintactico("USER", Token.Linea, Token.PI);
+        }
+    }
+    
+    
+    //NULL O NOT NULL
+    public void NULLABLE() {
+        if(Token.Valor.equals("NULL"))
+        {
+            emparejar("NULL");
+        }
+        else if(Token.Valor.equals("NOT"))
+        {
+            emparejar("NOT");
+            emparejar("NULL");
+        }
+    }
     
     public void INSERTCOLUMNLIST() {
         if(Token.Valor.equals("("))
@@ -647,30 +673,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             emparejar(",");
             ID();
             INSERTCOLUMNLISTB();
-        }
-    }
-    
-    public void ALTERVIEW() {
-
-        if(Token.Valor.equals("VIEW"))
-        {
-            emparejar("VIEW");
-            OBJECT2();
-            INSERTCOLUMNLIST();
-            emparejar("AS");
-            SELECT();
-        }
-    }
-
-    public void ALTERUSER() {
-        if(Token.Valor.equals("USER"))
-        {
-            emparejar("USER");
-            emparejar("Identificador");
-        }
-        else
-        {
-            errorsintactico("USER", Token.Linea, Token.PI);
         }
     }
     
@@ -854,6 +856,8 @@ public class FormPrincipal extends javax.swing.JFrame {
             
     }
     
+    
+    //ON OPCIONAL
     public void OPTIONALON() {
         if(Token.Valor.equals("ON"))
         {
@@ -865,6 +869,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
+    //NOT FOR REPLICATION
     public void NFR() {
         if(Token.Valor.equals("NOT"))
         {
@@ -883,7 +889,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             }
         }
     }
-    
+   
     public void CNC() {
         
         if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
@@ -1023,6 +1029,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
     // COLUMN CONSTRAINT
     public void COLUMNCONSTRAINT() {
         if(Token.Valor.equals("CONSTRAINT"))
@@ -1160,6 +1167,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
     //TABLE CONSTRAINT
     public void TABLECONSTRAINT() {
         if(Token.Valor.equals("CONSTRAINT"))
@@ -1286,25 +1294,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
 
-    public void TOP() {
-
-        if (Token.Valor.equals("TOP")) {
-            emparejar("TOP");
-            emparejar("(");
-            emparejar("Int");
-            emparejar(")");
-            TOPA();
-        }
-    }
-
-    public void TOPA() {
-        
-        if(Token.Valor.equals("PERCENT"))
-        {
-            emparejar("PERCENT");
-        }
-    }
-
     public void DELETEA() {
         
         if(Token.Valor.equals("OPENQUERY"))
@@ -1356,6 +1345,28 @@ public class FormPrincipal extends javax.swing.JFrame {
             errorsintactico("(", Token.Linea, Token.PI);
         }
     }
+    
+    
+    //TOP
+    public void TOP() {
+
+        if (Token.Valor.equals("TOP")) {
+            emparejar("TOP");
+            emparejar("(");
+            emparejar("Int");
+            emparejar(")");
+            TOPA();
+        }
+    }
+
+    public void TOPA() {
+        
+        if(Token.Valor.equals("PERCENT"))
+        {
+            emparejar("PERCENT");
+        }
+    }
+
     
     //TIPO DE DATO
     public void TIPODATO() {
@@ -1476,6 +1487,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
     //DROP
     public void DROP() {
 
@@ -1517,13 +1529,6 @@ public class FormPrincipal extends javax.swing.JFrame {
 
     }
 
-    public void IFEXIST() {
-        if (Token.Valor.equals("IF")) {
-            emparejar("IF");
-            emparejar("EXISTS");
-        }
-    }
-
     public void DROPTABLEA() {
         if (Token.Valor.equals(",")) {
             emparejar(",");
@@ -1542,23 +1547,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             errorsintactico("VIEW", Token.Linea, Token.PI);
         }
 
-    }
-
-    public void OBJECT2() {
-        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
-            ID();
-            OBJECT2A();
-        } else {
-            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
-        }
-
-    }
-
-    public void OBJECT2A() {
-        if (Token.Valor.equals(".")) {
-            emparejar(".");
-            ID();
-        }
     }
 
     public void DROPVIEWA() {
@@ -1630,6 +1618,124 @@ public class FormPrincipal extends javax.swing.JFrame {
             errorsintactico("USER", Token.Linea, Token.PI);
         }
     }
+    
+    
+    //FUNCIONES
+    public void IFEXIST() {
+        if (Token.Valor.equals("IF")) {
+            emparejar("IF");
+            emparejar("EXISTS");
+        }
+    }
+    
+    public void OBJECT2() {
+        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ID();
+            OBJECT2A();
+        } else {
+            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
+        }
+
+    }
+
+    public void OBJECT2A() {
+        if (Token.Valor.equals(".")) {
+            emparejar(".");
+            ID();
+        }
+    }
+    
+    public void OBJECT3() {
+
+        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+            ID();
+            OBJECT3A();
+        } else {
+            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
+        }
+    }
+
+    public void OBJECT3A() {
+        if (Token.Valor.equals(".")) {
+            emparejar(".");
+            OBJECT2();
+        }
+    }
+    
+    public void ID() {
+        if (Token.Valor.equals("Identificador")) {
+            emparejar("Identificador");
+        } else if (Token.Valor.equals("[")) {
+            emparejar("[");
+            emparejar("Identificador");
+            emparejar("]");
+        } else {
+            errorsintactico("Identificador " + "[ ", Token.Linea, Token.PI);
+        }
+    }
+    
+    public void OBJECT4() {
+        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+        {
+            ID();
+            OBJECT4A();
+        }
+        else
+        {
+            errorsintactico("Identificador " + "[ " , Token.Linea, Token.PI);
+        }
+    }
+    
+    public void OBJECT4A() {
+        if (Token.Valor.equals(".")) {
+            emparejar(".");
+            OBJECT3();
+        }
+    }
+    
+    public void CONSTANTE() {
+     if(Token.Valor.equals("Bit"))
+     {
+         emparejar("Bit");
+     }
+     else if(Token.Valor.equals("Int"))
+     {
+         emparejar("Int");
+     }
+     else if(Token.Valor.equals("Float"))
+     {
+         emparejar("Float");
+     }
+     else if(Token.Valor.equals("String"))
+     {
+         emparejar("String");
+     }
+     else if(Token.Valor.equals("@"))
+     {
+         VARIABLE();
+     }
+     else if(Token.Valor.equals("NULL"))
+     {
+         emparejar("NULL");
+     }
+     else 
+     {
+         errorsintactico("Bit " + "Int " + "Float " + "String " + "@ ", Token.Linea, Token.PI);
+     }
+   }
+   
+    public void VARIABLE() {
+       if(Token.Valor.equals("@"))
+       {
+          emparejar("@"); 
+          emparejar("Identificador");
+       }
+       else
+       {
+           errorsintactico("@ " + "Identificador ", Token.Linea, Token.PI);
+       }
+   }
+
 
     //INSERT
     public void INSERT() {
@@ -1706,35 +1812,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             emparejar("INTO");
         }
     }
-
-    public void OBJECT3() {
-
-        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
-            ID();
-            OBJECT3A();
-        } else {
-            errorsintactico("[ " + "Identificador ", Token.Linea, Token.PI);
-        }
-    }
-
-    public void ID() {
-        if (Token.Valor.equals("Identificador")) {
-            emparejar("Identificador");
-        } else if (Token.Valor.equals("[")) {
-            emparejar("[");
-            emparejar("Identificador");
-            emparejar("]");
-        } else {
-            errorsintactico("Identificador " + "[ ", Token.Linea, Token.PI);
-        }
-    }
-
-    public void OBJECT3A() {
-        if (Token.Valor.equals(".")) {
-            emparejar(".");
-            OBJECT2();
-        }
-    }
+    
 
     //TRUNCATE Y PRODUCCIONES
     public void TRUNCATE() {
@@ -1748,6 +1826,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
 
+    
     //UPDATE Y PRODUCCIONES
     public void UPDATE() {
 
@@ -1813,7 +1892,8 @@ public class FormPrincipal extends javax.swing.JFrame {
             UPDATEC();
         }
     }
-    
+
+
     //EXPRESIONES
     public void EXPRESION() {
        if (Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
@@ -1974,68 +2054,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
-    public void OBJECT4() {
-        if(Token.Valor.equals("Identificador") || Token.Valor.equals("["))
-        {
-            ID();
-            OBJECT4A();
-        }
-        else
-        {
-            errorsintactico("Identificador " + "[ " , Token.Linea, Token.PI);
-        }
-    }
-    
-    public void OBJECT4A() {
-        if (Token.Valor.equals(".")) {
-            emparejar(".");
-            OBJECT3();
-        }
-    }
-    
-    public void CONSTANTE() {
-     if(Token.Valor.equals("Bit"))
-     {
-         emparejar("Bit");
-     }
-     else if(Token.Valor.equals("Int"))
-     {
-         emparejar("Int");
-     }
-     else if(Token.Valor.equals("Float"))
-     {
-         emparejar("Float");
-     }
-     else if(Token.Valor.equals("String"))
-     {
-         emparejar("String");
-     }
-     else if(Token.Valor.equals("@"))
-     {
-         VARIABLE();
-     }
-     else if(Token.Valor.equals("NULL"))
-     {
-         emparejar("NULL");
-     }
-     else 
-     {
-         errorsintactico("Bit " + "Int " + "Float " + "String " + "@ ", Token.Linea, Token.PI);
-     }
-   }
-   
-    public void VARIABLE() {
-       if(Token.Valor.equals("@"))
-       {
-          emparejar("@"); 
-          emparejar("Identificador");
-       }
-       else
-       {
-           errorsintactico("@ " + "Identificador ", Token.Linea, Token.PI);
-       }
-   }
-    
     public void SELECTCOLUMNS() {
         if(Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("Bit")
             || Token.Valor.equals("Int") || Token.Valor.equals("Float") || Token.Valor.equals("String") || 
@@ -2101,6 +2119,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
         
     }
+    
     
     //SELECT
     public void SELECT() {
@@ -2202,6 +2221,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
     //FROM SELECT
     public void FROMSELECT() {
         if(Token.Valor.equals("FROM"))
@@ -2267,6 +2287,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
     //OPERADORES BOOLEANOS
     public void OPERADORESBOOLEANOS() {
        if(Token.Valor.equals("="))
@@ -2294,6 +2315,7 @@ public class FormPrincipal extends javax.swing.JFrame {
            emparejar("<=");
        }
    }
+    
     
     //PREDICADO
     public void NOTPREDICADO() {
@@ -2376,6 +2398,7 @@ public class FormPrincipal extends javax.swing.JFrame {
            errorsintactico("BETWEEN " + "IN " + "LIKE " , Token.Linea, Token.PI);
        }
    }
+    
     
     //SEARCHCONDITION
     public void SEARCHCONDITION() {
