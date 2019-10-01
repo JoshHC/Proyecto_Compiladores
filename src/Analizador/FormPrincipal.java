@@ -130,6 +130,7 @@ public class FormPrincipal extends javax.swing.JFrame {
                     //Se manda a escribir la salida en un archivo de texto
                     //EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql", " "), txtruta.getText(), resultado);
                     //Se envía al analizador sintáctico.
+                    AnalizarLista();
                     AnalizadorSintactico();
                     return;
                 }
@@ -137,6 +138,8 @@ public class FormPrincipal extends javax.swing.JFrame {
 
                     case ERROR:
                         resultado += "ERROR, Simbolo: " + lexer.lexeme + " no definido en el lenguaje" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
+                        SintacticList.add(Taux);
                         break;
 
                     case Identificador:
@@ -163,6 +166,8 @@ public class FormPrincipal extends javax.swing.JFrame {
 
                     case StringE:
                         resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
+                        SintacticList.add(Taux);
                         break;
 
                     case Int:
@@ -182,6 +187,8 @@ public class FormPrincipal extends javax.swing.JFrame {
                     case ComentarioE:
                         //quitar comentario
                         resultado += "ERROR, el comentario no posee el operador de cierre" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
+                        SintacticList.add(Taux);
                         break;
 
                     default:
@@ -207,39 +214,83 @@ public class FormPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
     public void AnalizarLista() {
-        Queue<TOKEN> ListaAux = new LinkedList<TOKEN>();
-        Queue<TOKEN> ListaFinal = new LinkedList<TOKEN>();
+        Queue<TOKEN> ListaAux = new LinkedList<>();
+        Queue<TOKEN> Lista = new LinkedList<>();
+        Queue<TOKEN> ListaFinal = new LinkedList<>();
+        boolean error = false;
+        int contador;
         
+        TOKEN TokenEx = new TOKEN();
         TOKEN TokenAux = new TOKEN();
         TokenAux = SintacticList.remove();
+        ListaAux.add(TokenAux);
         
-        while(!ListaAux.isEmpty() == false)  
+        while(ListaAux.isEmpty() == false && SintacticList.size() != 0)  
         {
+            TokenAux = SintacticList.poll();
             ListaAux.add(TokenAux);
-            TokenAux = SintacticList.remove();
             
             if(TokenAux.Valor.equals(";") || TokenAux.Valor.equals("GO"))
             {
-               ListaAux.add(TokenAux);
-               TokenAux = SintacticList.remove();
-               if(TokenAux.Valor.equals(";") || TokenAux.Valor.equals("GO"))
+                TokenAux = SintacticList.poll();
+                
+                if(TokenAux != null)
                 {
-                    ListaAux.add(TokenAux);
-                    TokenAux = SintacticList.remove();
-                    if(ListaAux.contains("ERROR"))
+                    if(TokenAux.Valor.equals(";") || TokenAux.Valor.equals("GO"))
                     {
-                        ListaAux.clear();
+                        ListaAux.add(TokenAux);
+                        TokenAux = SintacticList.poll();
+                    }
+                }
+                contador = ListaAux.size();
+                for (int i = 0; i < contador; i++) {
+                    
+                    TokenEx = ListaAux.poll();
+                    if(TokenEx.Valor.equals("ERROR"))
+                    {
+                        error =  true;
                     }
                     else
                     {
-                        while(!ListaAux.isEmpty())
-                        {
-                            ListaFinal.add(ListaAux.remove());
-                        }
+                        Lista.add(TokenEx);
                     }
                 }
+                
+                if(error == false)
+                {
+                    if(Lista.isEmpty() == false)
+                    {
+                        while(Lista.isEmpty() == false)
+                        {
+                            ListaFinal.add(Lista.remove());
+                        }
+                        ListaAux.add(TokenAux);
+                    }
+                }
+                else
+                {
+                    Lista.clear();
+                    if(TokenAux != null)
+                    {
+                        ListaAux.add(TokenAux);
+                        error = false;
+                    }
+                }                
+            }  
+        }
+        if(ListaAux.size() != 0)
+        {
+            while(ListaAux.isEmpty() == false)
+            {
+              if(ListaAux.peek() != null)
+              {
+              ListaFinal.add(ListaAux.remove());
+              }
+              else
+              {
+                  ListaAux.remove();
+              }
             }
-            
         }
         
         SintacticList = ListaFinal;
@@ -250,7 +301,14 @@ public class FormPrincipal extends javax.swing.JFrame {
         Token = SintacticList.remove();
         while(SintacticList.size() != 0) 
         {
+            if(Token.Valor != null)
+            {
             INICIAL();
+            }
+            else
+            {
+                break;
+            }
         }
         JOptionPane.showMessageDialog(null, "Análisis Sintáctico Completado Exitosamente", "Análisis Sintáctico", JOptionPane.OK_OPTION);
     }
@@ -452,7 +510,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             emparejar("SET");
             emparejar("ROLLBACK");
-            emparejar("INMEDIATE");
+            emparejar("IMMEDIATE");
         }
         else
         {
@@ -591,14 +649,10 @@ public class FormPrincipal extends javax.swing.JFrame {
     }
     
     public void ALTERTABLEDROPA() {
-        if(Token.Valor.equals("CONSTRAINT"))
+        if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("IF") || 
+           Token.Valor.equals("Identificador") || Token.Valor.equals("["))
         {
             ALTERTABLEDROPB();
-            IFEXIST();
-            ID();
-        }
-        else if(Token.Valor.equals("IF"))
-        {
             IFEXIST();
             ID();
         }
@@ -610,7 +664,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
         else
         {
-            errorsintactico("CONSTRAINT " + "IF " + "COLUMN ", Token.Linea, Token.PI);
+            errorsintactico("CONSTRAINT " + "COLUMN ", Token.Linea, Token.PI);
         }
     }
     
@@ -637,7 +691,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             ID();
         }
-        else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("IF"))
+        else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("COLUMN"))
         {
             ALTERTABLEDROPA();
         }
@@ -914,10 +968,10 @@ public class FormPrincipal extends javax.swing.JFrame {
         if(Token.Valor.equals("NOT"))
         {
             emparejar("NOT");
-            if(SintacticList.peek().Valor.equals("FOR"))
+            if(Token.Valor.equals("FOR"))
             {
             emparejar("FOR");
-            if(SintacticList.peek().Valor.equals("REPLICATION"))
+            if(Token.Valor.equals("REPLICATION"))
             {
             emparejar("REPLICATION");
             }
@@ -935,7 +989,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             COLUMNDEF();
         }
-        else if(Token.Valor.equals("CONSTRAINT"))
+        else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("UNIQUE") || 
+                Token.Valor.equals("FOREIGN") || Token.Valor.equals("PRIMARY") || Token.Valor.equals("CHECK"))
         {
             TABLECONSTRAINT();
         }
@@ -1034,7 +1089,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         if(Token.Valor.equals("IDENTITY"))
         {
             emparejar("IDENTITY");
-            COLUMNDEFE();
+            COLUMNDEFF();
         }
     }
     
@@ -1071,7 +1126,9 @@ public class FormPrincipal extends javax.swing.JFrame {
     
     // COLUMN CONSTRAINT
     public void COLUMNCONSTRAINT() {
-        if(Token.Valor.equals("CONSTRAINT"))
+        if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("PRIMARY") || 
+           Token.Valor.equals("UNIQUE") || Token.Valor.equals("FOREIGN") || 
+           Token.Valor.equals("REFERENCES") || Token.Valor.equals("CHECK"))
         {
             COLUMNCONSTRAINTA();
             COLUMNCONSTRAINTB();
@@ -1099,7 +1156,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             emparejar("UNIQUE");
             COLUMNCONSTRAINTC();
         }
-        else if(Token.Valor.equals("FOREIGN"))
+        else if(Token.Valor.equals("FOREIGN") || Token.Valor.equals("REFERENCES"))
         {
             COLUMNCONSTRAINTD();
             emparejar("REFERENCES");
@@ -1155,23 +1212,18 @@ public class FormPrincipal extends javax.swing.JFrame {
         if(Token.Valor.equals("ON"))
         {
             emparejar("ON");
-            COLUMNCONSTRAINTG();
+            emparejar("DELETE");
             COLUMNCONSTRAINTL();
         }
     }
     
     public void COLUMNCONSTRAINTG() {
-        if(Token.Valor.equals("DELETE"))
+
+        if(Token.Valor.equals("ON"))
         {
-            emparejar("DELETE");
-        }
-        else if(Token.Valor.equals("UPDATE"))
-        {
+            emparejar("ON");
             emparejar("UPDATE");
-        }
-        else
-        {
-            errorsintactico("DELETE " + "UPDATE ", Token.Linea, Token.PI);
+            COLUMNCONSTRAINTL();
         }
     }
     
@@ -1209,7 +1261,8 @@ public class FormPrincipal extends javax.swing.JFrame {
     
     //TABLE CONSTRAINT
     public void TABLECONSTRAINT() {
-        if(Token.Valor.equals("CONSTRAINT"))
+        if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("PRIMARY") ||
+           Token.Valor.equals("UNIQUE") || Token.Valor.equals("FOREIGN") || Token.Valor.equals("CHECK"))
         {
             COLUMNCONSTRAINTA();
             TABLECONSTRAINTA();
@@ -1232,6 +1285,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             emparejar("UNIQUE");
             COLUMNCONSTRAINTC();
+            TABLECONSTRAINTB();
         }
         else if(Token.Valor.equals("FOREIGN"))
         {
@@ -1242,6 +1296,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             OBJECT2();
             COLUMNCONSTRAINTE();
             COLUMNCONSTRAINTF();
+            COLUMNCONSTRAINTG();
             NFR();
         }
         else if(Token.Valor.equals("CHECK"))
@@ -2381,7 +2436,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     public void PREDICADOA() {
        if (Token.Valor.equals("=") || Token.Valor.equals("-") 
             ||Token.Valor.equals(">") || Token.Valor.equals(">=")
-            ||Token.Valor.equals("<") || Token.Valor.equals("<=")) 
+            ||Token.Valor.equals("<") || Token.Valor.equals("<=") || Token.Valor.equals("!=")) 
        {
             OPERADORESBOOLEANOS();
             EXPRESION();
@@ -2490,6 +2545,7 @@ public class FormPrincipal extends javax.swing.JFrame {
 
         } else {
             errorsintactico("; " + "GO ", Token.Linea, Token.PI);
+            Token = SintacticList.poll();
         }
         
         Prueba = false;
