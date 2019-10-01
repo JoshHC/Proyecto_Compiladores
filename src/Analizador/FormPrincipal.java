@@ -398,15 +398,36 @@ public class FormPrincipal extends javax.swing.JFrame {
         if (Token.Valor.equals("AS")) {
             emparejar("AS");
             ALIASA();
-        } else if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+        } else if (Token.Valor.equals("[") || Token.Valor.equals("Identificador") || 
+                   Token.Valor.equals("String")) {
             ALIASA();
         } 
     }
     
+    public void ALIASID() {
+        if(Token.Valor.equals("Identificador"))
+        {
+            emparejar("Identificador");
+            ALIASID();
+        }
+        else 
+        {
+            errorsintactico("Identificador", Token.Linea, Token.PI);
+        }
+    }
+    
     public void ALIASA() {
-        if (Token.Valor.equals("[") || Token.Valor.equals("Identificador")) {
+        if (Token.Valor.equals("Identificador")) {
             ID();   
-        } else if (Token.Valor.equals("String")) {
+        } 
+        else if(Token.Valor.equals("["))
+        {
+            emparejar("[");
+            emparejar("Identificador");
+            ALIASID();
+            emparejar("]");
+        }
+        else if (Token.Valor.equals("String")) {
             emparejar("String");
         } 
         else {
@@ -685,7 +706,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             ID();
         }
         else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("IF") || 
-           Token.Valor.equals("Identificador") || Token.Valor.equals("["))
+           Token.Valor.equals("Identificador") || Token.Valor.equals("[") || Token.Valor.equals("COLUMN"))
         {
             ALTERTABLEDROPA();
         }
