@@ -413,13 +413,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             errorsintactico("[ " + "String " + "Identificador ", Token.Linea, Token.PI);
         }
     }
-    
-    public void ALIASSPACE() {
-        if(Token.Valor.equals(" "))
-        {
-            emparejar(" ");
-        }
-    }
 
     //FROM
     public void FROM() {
@@ -664,7 +657,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
         else
         {
-            errorsintactico("CONSTRAINT " + "COLUMN ", Token.Linea, Token.PI);
+            errorsintactico("CONSTRAINT " + "COLUMN " +"IF" + "Identificador" + "[", Token.Linea, Token.PI);
         }
     }
     
@@ -691,7 +684,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         {
             ID();
         }
-        else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("COLUMN"))
+        else if(Token.Valor.equals("CONSTRAINT") || Token.Valor.equals("IF") || 
+           Token.Valor.equals("Identificador") || Token.Valor.equals("["))
         {
             ALTERTABLEDROPA();
         }
@@ -1830,7 +1824,7 @@ public class FormPrincipal extends javax.swing.JFrame {
        }
    }
 
-
+    
     //INSERT
     public void INSERT() {
 
@@ -2433,7 +2427,7 @@ public class FormPrincipal extends javax.swing.JFrame {
        }
    }
     
-    public void PREDICADOA() {
+    public void PREDICADOA()    {
        if (Token.Valor.equals("=") || Token.Valor.equals("-") 
             ||Token.Valor.equals(">") || Token.Valor.equals(">=")
             ||Token.Valor.equals("<") || Token.Valor.equals("<=") || Token.Valor.equals("!=")) 
