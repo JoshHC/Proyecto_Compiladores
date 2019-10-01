@@ -206,6 +206,45 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
+    public void AnalizarLista() {
+        Queue<TOKEN> ListaAux = new LinkedList<TOKEN>();
+        Queue<TOKEN> ListaFinal = new LinkedList<TOKEN>();
+        
+        TOKEN TokenAux = new TOKEN();
+        TokenAux = SintacticList.remove();
+        
+        while(!ListaAux.isEmpty() == false)  
+        {
+            ListaAux.add(TokenAux);
+            TokenAux = SintacticList.remove();
+            
+            if(TokenAux.Valor.equals(";") || TokenAux.Valor.equals("GO"))
+            {
+               ListaAux.add(TokenAux);
+               TokenAux = SintacticList.remove();
+               if(TokenAux.Valor.equals(";") || TokenAux.Valor.equals("GO"))
+                {
+                    ListaAux.add(TokenAux);
+                    TokenAux = SintacticList.remove();
+                    if(ListaAux.contains("ERROR"))
+                    {
+                        ListaAux.clear();
+                    }
+                    else
+                    {
+                        while(!ListaAux.isEmpty())
+                        {
+                            ListaFinal.add(ListaAux.remove());
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        SintacticList = ListaFinal;
+    }
+    
     public void AnalizadorSintactico() {
         
         Token = SintacticList.remove();
