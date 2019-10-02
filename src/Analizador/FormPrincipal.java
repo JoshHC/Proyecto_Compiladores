@@ -410,10 +410,6 @@ public class FormPrincipal extends javax.swing.JFrame {
             emparejar("Identificador");
             ALIASID();
         }
-        else 
-        {
-            errorsintactico("Identificador", Token.Linea, Token.PI);
-        }
     }
     
     public void ALIASA() {
