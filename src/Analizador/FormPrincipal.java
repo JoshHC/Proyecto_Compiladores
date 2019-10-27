@@ -13,10 +13,34 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java_cup.runtime.Symbol;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -32,6 +56,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
+    //public TOKEN Token = new TOKEN();
+    public boolean Prueba;
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -96,7 +122,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         FileNameExtensionFilter MiniSQLFilter = new FileNameExtensionFilter("Archivos con Extensión MiniSQL", "minisql"); 
         chooser.setFileFilter(MiniSQLFilter);
         chooser.showOpenDialog(null);
-
+/*
 
         try {
             //Se crea un lector con el cual se leéra el archivo seleccionado
@@ -122,12 +148,18 @@ public class FormPrincipal extends javax.swing.JFrame {
                     txtResultado.setText(resultado);
                     //Se manda a escribir la salida en un archivo de texto
                     EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql"," "), txtruta.getText(), resultado);
+                    //EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql", " "), txtruta.getText(), resultado);
+                    //Se envía al analizador sintáctico.
+                    String datos = LeerArchivo(chooser.getSelectedFile().getAbsolutePath());
+                    AnalizadorSintactico(datos);
                     return;
                 }
                 switch (tokens) {
                     
                     case ERROR:
                         resultado += "ERROR, Simbolo: "+lexer.lexeme+" no definido en el lenguaje" +"\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                        resultado += "ERROR, Simbolo: " + lexer.lexeme + " no definido en el lenguaje" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
                         break;
                         
                     case Identificador: 
@@ -150,6 +182,352 @@ public class FormPrincipal extends javax.swing.JFrame {
                         //Si es una palabra reservada
                         resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: "+lexer.line+"  "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                         Contador++;
+                        resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
+                        } else {
+                            //Si el identificador cumple con las reglas
+                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es un " + tokens + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
+                        }
+                        break;
+
+                    case ADD:
+                    case AND:
+                    case OR:
+                    case EXTERNAL:
+                    case FETCH:
+                    case PUBLIC:
+                    case ALTER:
+                    case FILE:
+                    case RAISERROR:
+                    case FILLFACTOR:
+                    case READ:
+                    case ANY:
+                    case FOR:
+                    case READTEXT:
+                    case AS:
+                    case FOREIGN:
+                    case RECONFIGURE:
+                    case FREETEXT:
+                    case REFERENCES:
+                    case AUTHORIZATION:
+                    case FREETEXTTABLE:
+                    case REPLICATION:
+                    case BACKUP:
+                    case FROM:
+                    case RESTORE:
+                    case BEGIN:
+                    case FULL:
+                    case RESTRICT:
+                    case BETWEEN:
+                    case FUNCTION:
+                    case RETURN:
+                    case BREAK:
+                    case GOTO:
+                    case REVERT:
+                    case BROWSE:
+                    case GRANT:
+                    case REVOKE:
+                    case BULK:
+                    case GROUP:
+                    case RIGHT:
+                    case BY:
+                    case HAVING:
+                    case ROLLBACK:
+                    case CASCADE:
+                    case HOLDLOCK:
+                    case ROWCOUNT:
+                    case CASE:
+                    case IDENTITY:
+                    case ROWGUIDCOL:
+                    case CHECK:
+                    case IDENTITY_INSERT:
+                    case RULE:
+                    case CHECKPOINT:
+                    case IDENTITYCOL:
+                    case SAVE:
+                    case CLOSE:
+                    case IF:
+                    case SCHEMA:
+                    case CLUSTERED:
+                    case IN:
+                    case SECURITYAUDIT:
+                    case COALESCE:
+                    case INDEX:
+                    case SELECT:
+                    case COLLATE:
+                    case INNER:
+                    case SEMANTICKEYPHRASETABLE:
+                    case COLUMN:
+                    case INSERT:
+                    case SEMANTICSIMILARITYDETAILSTABLE:
+                    case COMMIT:
+                    case INTERSECT:
+                    case SEMANTICSIMILARITYTABLE:
+                    case COMPUTE:
+                    case INTO:
+                    case SESSION_USER:
+                    case CONSTRAINT:
+                    case IS:
+                    case SET:
+                    case CONTAINS:
+                    case JOIN:
+                    case SETUSER:
+                    case CONTAINSTABLE:
+                    case KEY:
+                    case SHUTDOWN:
+                    case CONTINUE:
+                    case KILL:
+                    case SOME:
+                    case CONVERT:
+                    case LEFT:
+                    case STATISTICS:
+                    case CREATE:
+                    case LIKE:
+                    case SYSTEM_USER:
+                    case CROSS:
+                    case LINENO:
+                    case TABLE:
+                    case CURRENT:
+                    case LOAD:
+                    case TABLESAMPLE:
+                    case CURRENT_DATE:
+                    case MERGE:
+                    case TEXTSIZE:
+                    case CURRENT_TIME:
+                    case NATIONAL:
+                    case THEN:
+                    case CURRENT_TIMESTAMP:
+                    case NOCHECK:
+                    case TO:
+                    case CURRENT_USER:
+                    case NONCLUSTERED:
+                    case TOP:
+                    case CURSOR:
+                    case NOT:
+                    case TRAN:
+                    case DATABASE:
+                    case NULL:
+                    case TRANSACTION:
+                    case DBCC:
+                    case NULLIF:
+                    case TRIGGER:
+                    case DEALLOCATE:
+                    case OF:
+                    case TRUNCATE:
+                    case DECLARE:
+                    case OFF:
+                    case TRY_CONVERT:
+                    case DEFAULT:
+                    case OFFSETS:
+                    case TSEQUAL:
+                    case DELETE:
+                    case UNION:
+                    case DENY:
+                    case OPEN:
+                    case UNIQUE:
+                    case DESC:
+                    case OPENDATASOURCE:
+                    case UNPIVOT:
+                    case DISK:
+                    case OPENQUERY:
+                    case UPDATE:
+                    case DISTINCT:
+                    case OPENROWSET:
+                    case UPDATETEXT:
+                    case DISTRIBUTED:
+                    case OPENXML:
+                    case USE:
+                    case DOUBLE:
+                    case OPTION:
+                    case USER:
+                    case DROP:
+                    case VALUES:
+                    case DUMP:
+                    case ORDER:
+                    case ARYING:
+                    case ELSE:
+                    case OUTER:
+                    case VIEW:
+                    case END:
+                    case OVER:
+                    case WAITFOR:
+                    case ERRLVL:
+                    case PERCENT:
+                    case WHEN:
+                    case ESCAPE:
+                    case PIVOT:
+                    case WHERE:
+                    case EXCEPT:
+                    case PLAN:
+                    case WHILE:
+                    case EXEC:
+                    case PRECISION:
+                    case WITH:
+                    case EXECUTE:
+                    case PRIMARY:
+                    case WITHIN_GROUP:
+                    case EXISTS:
+                    case PRINT:
+                    case WRITETEXT:
+                    case EXIT:
+                    case PROC:
+                    case ABSOLUTE:
+                    case OVERLAPS:
+                    case ACTION:
+                    case PAD:
+                    case ADA:
+                    case PARTIAL:
+                    case PASCAL:
+                    case ALL:
+                    case EXTRACT:
+                    case POSITION:
+                    case ALLOCATE:
+                    case FALSE:
+                    case PREPARE:
+                    case FIRST:
+                    case PRESERVE:
+                    case FLOAT:
+                    case ARE:
+                    case PRIOR:
+                    case PRIVILEGES:
+                    case ASC:
+                    case FORTRAN:
+                    case PROCEDURE:
+                    case ASSERTION:
+                    case FOUND:
+                    case AT:
+                    case REAL:
+                    case AVG:
+                    case GET:
+                    case GLOBAL:
+                    case RELATIVE:
+                    case GO:
+                    case BIT:
+                    case BIT_LENGTH:
+                    case BOTH:
+                    case ROWS:
+                    case HOUR:
+                    case CASCADED:
+                    case SCROLL:
+                    case IMMEDIATE:
+                    case SECOND:
+                    case CAST:
+                    case SECTION:
+                    case CATALOG:
+                    case INCLUDE:
+                    case CHAR:
+                    case SESSION:
+                    case CHAR_LENGTH:
+                    case INDICATOR:
+                    case CHARACTER:
+                    case INITIALLY:
+                    case CHARACTER_LENGTH:
+                    case SIZE:
+                    case INPUT:
+                    case SMALLINT:
+                    case INSENSITIVE:
+                    case SPACE:
+                    case INT:
+                    case SQL:
+                    case COLLATION:
+                    case INTEGER:
+                    case SQLCA:
+                    case SQLCODE:
+                    case INTERVAL:
+                    case SQLERROR:
+                    case CONNECT:
+                    case SQLSTATE:
+                    case CONNECTION:
+                    case SQLWARNING:
+                    case ISOLATION:
+                    case SUBSTRING:
+                    case CONSTRAINTS:
+                    case SUM:
+                    case LANGUAGE:
+                    case CORRESPONDING:
+                    case LAST:
+                    case TEMPORARY:
+                    case COUNT:
+                    case LEADING:
+                    case TIME:
+                    case LEVEL:
+                    case TIMESTAMP:
+                    case TIMEZONE_HOUR:
+                    case LOCAL:
+                    case TIMEZONE_MINUTE:
+                    case LOWER:
+                    case MATCH:
+                    case TRAILING:
+                    case MAX:
+                    case MIN:
+                    case TRANSLATE:
+                    case DATE:
+                    case MINUTE:
+                    case TRANSLATION:
+                    case DAY:
+                    case MODULE:
+                    case TRIM:
+                    case MONTH:
+                    case TRUE:
+                    case DEC:
+                    case NAMES:
+                    case DECIMAL:
+                    case NATURAL:
+                    case UNKNOWN:
+                    case NCHAR:
+                    case DEFERRABLE:
+                    case NEXT:
+                    case UPPER:
+                    case DEFERRED:
+                    case NO:
+                    case USAGE:
+                    case NONE:
+                    case USING:
+                    case DESCRIBE:
+                    case VALUE:
+                    case DESCRIPTOR:
+                    case DIAGNOSTICS:
+                    case NUMERIC:
+                    case VARCHAR:
+                    case DISCONNECT:
+                    case OCTET_LENGTH:
+                    case VARYING:
+                    case DOMAIN:
+                    case ON:
+                    case ONLY:
+                    case WHENEVER:
+                    case WORK:
+                    case END_EXEC:
+                    case WRITE:
+                    case YEAR:
+                    case OUTPUT:
+                    case ZONE:
+                    case EXCEPTION:
+                    case OUT:
+                    case READONLY:
+                    case ENCRYPTION:
+                    case RETURNS:
+                    case SCHEMABINDING:
+                    case CALLED:
+                    case INLINE:
+                    case CALLER:
+                    case SELF:
+                    case OWNER:
+                    case RECOMPILE:
+                    case MARK:
+                    case FORWARD_ONLY:
+                    case STATIC:
+                    case KEYSET:
+                    case DYNAMIC:
+                    case FAST_FORWARD:
+                    case READ_ONLY:
+                    case SCROLL_LOCKS:
+                    case OPTIMISTIC:
+                    case TYPE_WARNING:
+                        //Si es una palabra reservada
+                        resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: " + lexer.line + "  " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
                         break;
                         
                     case StringE:
@@ -159,6 +537,16 @@ public class FormPrincipal extends javax.swing.JFrame {
                     case Int: case String: case Float: case Bit:
                          resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                          Contador++;
+                        resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
+                        break;
+
+                    case Int:
+                    case String:
+                    case Float:
+                    case Bit:
+                        resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es un " + tokens + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
                         break;
                         
                     case Comentario: 
@@ -171,6 +559,10 @@ public class FormPrincipal extends javax.swing.JFrame {
                         resultado += "ERROR, el comentario no posee el operador de cierre"+ "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n"; 
                     break;     
                         
+                        resultado += "ERROR, el comentario no posee el operador de cierre" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
+                        break;
+
                     default:
                         if(tokens.toString().contains("_"))
                         {
@@ -182,6 +574,11 @@ public class FormPrincipal extends javax.swing.JFrame {
                         {
                             resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                             Contador++;
+                     resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es " + temporal + "\n" + "Linea: " + lexer.line + "    " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
+                        } else {
+                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es  " + tokens + "\n" + "Linea: " + lexer.line + "    " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
+                            Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
                         }
                         break;
                 }
@@ -191,6 +588,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FormPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
+            Logger.getLogger(FormPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             Logger.getLogger(FormPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAnalizarActionPerformed
@@ -218,10 +617,73 @@ public class FormPrincipal extends javax.swing.JFrame {
         
     }
     
+  
+    public void AnalizadorSintactico(String data) throws Exception {
+
+        ArrayList<String> ErroresSintacticos = null;
+        Sintax s = new Sintax(new Analizador.LexerCup(new StringReader(data)));
+        String Contenido = "";
+        
+        txtResultado.setText("");        
+        //Se parsea el archivo
+        s.parse();
+        
+        //Se agrega la lista de errores sintacticos
+        ErroresSintacticos = s.SyntacticErrors;
+        
+        //Se concatenan los errores en una variable para luego asignarlos al cuadro de texto
+        for(String element: ErroresSintacticos){
+                if(Contenido.contains(element) == false)
+                {
+                Contenido += element + "\r\n";
+                }
+        }
+        
+        if (ErroresSintacticos.isEmpty()) {
+            
+            txtResultado.setText("**** ANALISIS SINTACTICO SIN ERRORES ****");
+            JOptionPane.showMessageDialog(null, "Análisis Sintáctico Completado Exitosamente Sin Errores", "Análisis Sintáctico", JOptionPane.OK_OPTION);
+        }
+        else{
+            txtResultado.setText(Contenido);
+            JOptionPane.showMessageDialog(null, "Análisis Sintáctico Completado", "Análisis Sintáctico", JOptionPane.OK_OPTION);
+        }
+        
+    }
+    
+    public static String LeerArchivo(String filename)throws Exception 
+    { 
+    String data = ""; 
+    data = new String(Files.readAllBytes(Paths.get(filename))); 
+    return data; 
+    }
+
+    
+
+    //Método que escribe la salida del archivo .out
+    public void EscribirSalida(String Nombre, String ruta, String Contenido) throws IOException {
+        //Se reemplaza el salto de línea por un salto de Línea que reconozca el BufferedWriter
+        Contenido = Contenido.replace("\n", "\r\n");
+        //Se reemplaza la extension del archivo
+        ruta = ruta.replace(".minisql", ".out");
+        File archivo = new File(ruta);
+        BufferedWriter bw;
+
+        if (archivo.exists()) {
+            bw = new BufferedWriter(new FileWriter(archivo));
+            bw.write(Contenido);
+        } else {
+            bw = new BufferedWriter(new FileWriter(archivo));
+            bw.write(Contenido);
+        }
+        bw.close();
+
+    }
+*/
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+   /* public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -252,7 +714,7 @@ public class FormPrincipal extends javax.swing.JFrame {
             }
         });
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;
     private javax.swing.JLabel jLabel1;
