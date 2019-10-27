@@ -23,8 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -56,8 +54,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    //public TOKEN Token = new TOKEN();
-    public boolean Prueba;
+    public TOKEN Token = new TOKEN();
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -85,6 +82,11 @@ public class FormPrincipal extends javax.swing.JFrame {
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 13, 610, 94));
 
         txtruta.setEnabled(false);
+        txtruta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtrutaActionPerformed(evt);
+            }
+        });
         getContentPane().add(txtruta, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 410, -1));
 
         btnAnalizar.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
@@ -122,19 +124,19 @@ public class FormPrincipal extends javax.swing.JFrame {
         FileNameExtensionFilter MiniSQLFilter = new FileNameExtensionFilter("Archivos con Extensión MiniSQL", "minisql"); 
         chooser.setFileFilter(MiniSQLFilter);
         chooser.showOpenDialog(null);
-/*
 
+        
+            
         try {
             //Se crea un lector con el cual se leéra el archivo seleccionado
-            Reader lector = new BufferedReader(new FileReader(chooser.getSelectedFile()));
+            Reader lector;
+            lector = new BufferedReader(new FileReader(chooser.getSelectedFile()));
             //Se fija la ruta en el cuadro de texto destinado
             txtruta.setText(chooser.getSelectedFile().getAbsolutePath());
             //Se crea una instancia de la clase y se le envia la lectura al constructor
             Alexico lexer = new Alexico(lector);
             //se crea una variable para el resultado
             String resultado = "";
-            //Contador de Tokens
-            int Contador = 0;
 
             while (true) 
             {
@@ -146,8 +148,7 @@ public class FormPrincipal extends javax.swing.JFrame {
                     resultado += "FIN";
                     //Se coloca el texto en el JTextPanel
                     txtResultado.setText(resultado);
-                    //Se manda a escribir la salida en un archivo de texto
-                    EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql"," "), txtruta.getText(), resultado);
+                    //Se manda a escribir la salida en un archivo de text
                     //EscribirSalida(chooser.getSelectedFile().getName().replace(".minisql", " "), txtruta.getText(), resultado);
                     //Se envía al analizador sintáctico.
                     String datos = LeerArchivo(chooser.getSelectedFile().getAbsolutePath());
@@ -158,8 +159,6 @@ public class FormPrincipal extends javax.swing.JFrame {
                     
                     case ERROR:
                         resultado += "ERROR, Simbolo: "+lexer.lexeme+" no definido en el lenguaje" +"\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                        resultado += "ERROR, Simbolo: " + lexer.lexeme + " no definido en el lenguaje" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
                         break;
                         
                     case Identificador: 
@@ -167,27 +166,12 @@ public class FormPrincipal extends javax.swing.JFrame {
                         if(lexer.lexeme.length() > 31)
                         {
                             //Si el identificador es mayor a 31 caracteres
-                            resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
+                            resultado += "TOKEN " + ":" +" El elemento: "+lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos"+"\n"+ "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                         }
                         else
                         {
                             //Si el identificador cumple con las reglas
-                            resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme+ " Es un " + tokens + "\n" + "Linea: "+lexer.line +"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
-                        }
-                        break;
-                        
-                    case Reservadas:
-                        //Si es una palabra reservada
-                        resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: "+lexer.line+"  "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                        Contador++;
-                        resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme.substring(0, 31) + " Es un " + tokens + "\n" + "ERROR, Identificador Truncado, Excedio el límite de caracteres permitidos" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                            Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
-                        } else {
-                            //Si el identificador cumple con las reglas
-                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es un " + tokens + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                            Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
+                            resultado += "TOKEN "+ ":"+" El elemento: "+lexer.lexeme+ " Es un " + tokens + "\n" + "Linea: "+lexer.line +"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                         }
                         break;
 
@@ -527,18 +511,10 @@ public class FormPrincipal extends javax.swing.JFrame {
                     case TYPE_WARNING:
                         //Si es una palabra reservada
                         resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " pertenece a las palabras " + tokens + "\n" + "Linea: " + lexer.line + "  " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                        Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
                         break;
                         
                     case StringE:
                         resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                        break;
-                 
-                    case Int: case String: case Float: case Bit:
-                         resultado += "TOKEN "+ Contador + ":"+" El elemento: "+lexer.lexeme + " Es un " + tokens + "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                         Contador++;
-                        resultado += "ERROR, el string excede la cantidad de líneas permitidas \n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
                         break;
 
                     case Int:
@@ -546,7 +522,6 @@ public class FormPrincipal extends javax.swing.JFrame {
                     case Float:
                     case Bit:
                         resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es un " + tokens + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                        Taux = new TOKEN(tokens.name(), lexer.line, lexer.initialcolumn);
                         break;
                         
                     case Comentario: 
@@ -558,32 +533,20 @@ public class FormPrincipal extends javax.swing.JFrame {
                         //quitar comentario
                         resultado += "ERROR, el comentario no posee el operador de cierre"+ "\n" + "Linea: "+lexer.line+"   "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n"; 
                     break;     
-                        
-                        resultado += "ERROR, el comentario no posee el operador de cierre" + "\n" + "Linea: " + lexer.line + "   " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                        Taux = new TOKEN("ERROR", lexer.line, lexer.initialcolumn);
-                        break;
 
                     default:
                         if(tokens.toString().contains("_"))
                         {
                             String temporal = tokens.toString().replace("_", " ");
-                            resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es " + temporal + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
+                            resultado += "TOKEN " + ":"+" El elemento: "+lexer.lexeme + " Es " + temporal + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
                         }
                         else
                         {
-                            resultado += "TOKEN " + Contador + ":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
-                            Contador++;
-                     resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es " + temporal + "\n" + "Linea: " + lexer.line + "    " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                            Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
-                        } else {
-                            resultado += "TOKEN " + ":" + " El elemento: " + lexer.lexeme + " Es  " + tokens + "\n" + "Linea: " + lexer.line + "    " + "Posición Inicial: " + lexer.initialcolumn + "  " + "Posición Final: " + lexer.finalcolumn + "\n" + "\n";
-                            Taux = new TOKEN(lexer.lexeme, lexer.line, lexer.initialcolumn);
-                        }
+                            resultado += "TOKEN " +":"+" El elemento: "+lexer.lexeme + " Es  " + tokens + "\n" + "Linea: "+lexer.line+"    "+"Posición Inicial: "+lexer.initialcolumn+"  "+"Posición Final: "+lexer.finalcolumn + "\n" + "\n";
+                        } 
                         break;
                 }
             }
-            
             
         } catch (FileNotFoundException ex) {
             Logger.getLogger(FormPrincipal.class.getName()).log(Level.SEVERE, null, ex);
@@ -594,29 +557,9 @@ public class FormPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAnalizarActionPerformed
 
-    
-    //Método que escribe la salida del archivo .out
-    public void EscribirSalida(String Nombre, String ruta, String Contenido) throws IOException
-    {
-        //Se reemplaza el salto de línea por un salto de Línea que reconozca el BufferedWriter
-        Contenido = Contenido.replace("\n", "\r\n");
-        //Se reemplaza la extension del archivo
-        ruta = ruta.replace(".minisql", ".out");
-        File archivo = new File(ruta);
-        BufferedWriter bw;
-        
-        if(archivo.exists()) 
-        {
-            bw = new BufferedWriter(new FileWriter(archivo));
-            bw.write(Contenido);
-        } else {
-            bw = new BufferedWriter(new FileWriter(archivo));
-            bw.write(Contenido);
-        }
-        bw.close();   
-        
-    }
-    
+    private void txtrutaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtrutaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtrutaActionPerformed
   
     public void AnalizadorSintactico(String data) throws Exception {
 
@@ -657,8 +600,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     data = new String(Files.readAllBytes(Paths.get(filename))); 
     return data; 
     }
-
-    
+   
 
     //Método que escribe la salida del archivo .out
     public void EscribirSalida(String Nombre, String ruta, String Contenido) throws IOException {
@@ -679,11 +621,10 @@ public class FormPrincipal extends javax.swing.JFrame {
         bw.close();
 
     }
-*/
     /**
      * @param args the command line arguments
      */
-   /* public static void main(String args[]) {
+   public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
