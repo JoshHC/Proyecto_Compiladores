@@ -5,23 +5,8 @@
  */
 package Analizador;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -31,12 +16,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -563,7 +547,7 @@ public class FormPrincipal extends javax.swing.JFrame {
   
     public void AnalizadorSintactico(String data) throws Exception {
 
-        ArrayList<String> ErroresSintacticos = null;
+        LinkedList<String> ErroresSintacticos = null;
         Sintax s = new Sintax(new Analizador.LexerCup(new StringReader(data)));
         String Contenido = "";
         

@@ -10,6 +10,16 @@ package Analizador;
  * @author josue
  */
 public enum Tokens {
+ NAME, 
+FILENAME, 
+ KB, 
+ GB, 
+ TB, 
+ MB, 
+ MAXSIZE, 
+ UNLIMITED, 
+ FILEGROWTH, 
+ MODULAR,
  ADD,
  AND,
  OR,

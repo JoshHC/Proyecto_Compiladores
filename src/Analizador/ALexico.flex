@@ -375,6 +375,16 @@ SignosCierre = "]"|"}"|")"
 "SCROLL_LOCKS" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return SCROLL_LOCKS;}
 "OPTIMISTIC" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return OPTIMISTIC;}
 "TYPE_WARNING" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return TYPE_WARNING;}
+"NAME" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return NAME;} 
+"FILENAME" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return FILENAME;} 
+"KB" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return KB;} 
+"GB" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return GB;}
+"TB" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return TB;}
+"MB" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MB;}
+"MAXSIZE" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MAXSIZE;} 
+"UNLIMITED" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return UNLIMITED;} 
+"FILEGROWTH" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return FILEGROWTH;}
+"MODULAR" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MODULAR;}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}

@@ -380,7 +380,16 @@ SignosCierre = "]"|"}"|")"
 "SCROLL_LOCKS" {return new Symbol (sym.SCROLL_LOCKS,yychar,yyline, yytext());}
 "OPTIMISTIC" {return new Symbol (sym.OPTIMISTIC,yychar,yyline, yytext());}
 "TYPE_WARNING" {return new Symbol (sym.TYPE_WARNING,yychar,yyline, yytext());}
-
+"NAME" {return new Symbol (sym.NAME,yychar,yyline, yytext());}
+"FILENAME" {return new Symbol (sym.FILENAME,yychar,yyline, yytext());}
+"KB" {return new Symbol (sym.KB,yychar,yyline, yytext());}
+"GB" {return new Symbol (sym.GB,yychar,yyline, yytext());}
+"TB" {return new Symbol (sym.TB,yychar,yyline, yytext());}
+"MB" {return new Symbol (sym.MB,yychar,yyline, yytext());}
+"MAXSIZE" {return new Symbol (sym.MAXSIZE,yychar,yyline, yytext());}
+"UNLIMITED" {return new Symbol (sym.UNLIMITED,yychar,yyline, yytext());}
+"FILEGROWTH" {return new Symbol (sym.FILEGROWTH,yychar,yyline, yytext());}
+"MODULAR" {return new Symbol (sym.MODULAR,yychar,yyline, yytext());}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}
