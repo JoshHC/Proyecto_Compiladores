@@ -25,6 +25,9 @@ SignosA = "[]"|"()"|"{}"
 Simbolos = "@"|"#"|"##"
 SignosApertura = "["|"{"|"("
 SignosCierre = "]"|"}"|")"
+Salto = \r| \n| \r\n
+EspacioE = [ \t]
+Empty = {Salto} | {EspacioE}
 
 /* Finaliza expresiones regulares */
 
@@ -390,6 +393,8 @@ SignosCierre = "]"|"}"|")"
 "UNLIMITED" {return new Symbol (sym.UNLIMITED,yychar,yyline, yytext());}
 "FILEGROWTH" {return new Symbol (sym.FILEGROWTH,yychar,yyline, yytext());}
 "MODULAR" {return new Symbol (sym.MODULAR,yychar,yyline, yytext());}
+"EXECUTE_AS_CLAUSE" {return new Symbol (sym.EXECUTE_AS_CLAUSE,yychar,yyline, yytext());}
+";"{Empty}*"GO" {return new Symbol (sym.PYCGO,yychar,yyline, yytext());}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}

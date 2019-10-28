@@ -23,6 +23,9 @@ SignosA = "[]"|"()"|"{}"
 Simbolos = "@"|"#"|"##"
 SignosApertura = "["|"{"|"("
 SignosCierre = "]"|"}"|")"
+Salto = \r| \n| \r\n
+EspacioE = [ \t]
+Empty = {Salto} | {EspacioE}
 
 /* Finaliza expresiones regulares */
 
@@ -385,6 +388,8 @@ SignosCierre = "]"|"}"|")"
 "UNLIMITED" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return UNLIMITED;} 
 "FILEGROWTH" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return FILEGROWTH;}
 "MODULAR" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MODULAR;}
+"EXECUTE_AS_CLAUSE" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return EXECUTE_AS_CLAUSE;}
+";"{Empty}*"GO" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return PYCGO;}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}
