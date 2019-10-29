@@ -10,8 +10,8 @@ package Analizador;
  * @author josue
  */
 public enum Tokens {
-PYCGO,
-EXECUTE_AS_CLAUSE, 
+NVARCHAR,
+PYCGO, 
 NAME, 
 FILENAME, 
  KB, 

@@ -659,6 +659,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         
         txtResultado.setText("");        
         //Se parsea el archivo
+        //PROBAR CON debug_parse();
         s.parse();
         //Se agrega la lista de errores sintacticos
         ErroresSintacticos = s.SyntacticErrors;
