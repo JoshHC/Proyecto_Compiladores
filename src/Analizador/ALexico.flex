@@ -390,7 +390,8 @@ Empty = {Salto} | {EspacioE}
 "MODULAR" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MODULAR;}
 ";"{Empty}*"GO" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return PYCGO;}
 "NVARCHAR" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return NVARCHAR;}
-
+"MONEY" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MONEY;}
+"DATETIME" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return DATETIME;}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}

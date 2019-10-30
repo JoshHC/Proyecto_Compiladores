@@ -8,7 +8,7 @@ import java_cup.runtime.Symbol;
 %cup
 %full
 %line
-%char
+%column
 
 /* Inicio de Expresiones regulares */
 L=[a-zA-Z]+
@@ -395,6 +395,8 @@ Empty = {Salto} | {EspacioE}
 "MODULAR" {return new Symbol (sym.MODULAR,yycolumn,yyline, yytext());}
 ";"{Empty}*"GO" {return new Symbol (sym.PYCGO,yycolumn,yyline, yytext());}
 "NVARCHAR" {return new Symbol (sym.NVARCHAR,yycolumn,yyline, yytext());}
+"MONEY" {return new Symbol (sym.MONEY,yycolumn,yyline, yytext());}
+"DATETIME" {return new Symbol (sym.DATETIME,yycolumn,yyline, yytext());}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}

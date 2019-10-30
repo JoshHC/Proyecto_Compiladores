@@ -10,6 +10,8 @@ package Analizador;
  * @author josue
  */
 public enum Tokens {
+DATETIME,
+MONEY,
 NVARCHAR,
 PYCGO, 
 NAME, 
