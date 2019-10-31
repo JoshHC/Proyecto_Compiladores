@@ -10,6 +10,7 @@ package Analizador;
  * @author josue
  */
 public enum Tokens {
+DELAYED_DURABILITY,
 DATETIME,
 MONEY,
 NVARCHAR,

@@ -392,6 +392,7 @@ Empty = {Salto} | {EspacioE}
 "NVARCHAR" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return NVARCHAR;}
 "MONEY" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return MONEY;}
 "DATETIME" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return DATETIME;}
+"DELAYED_DURABILITY" {lexeme = yytext(); line = yyline; initialcolumn = yycolumn; finalcolumn = yycolumn + yylength() -1; return DELAYED_DURABILITY;}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}

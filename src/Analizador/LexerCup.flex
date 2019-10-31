@@ -397,6 +397,7 @@ Empty = {Salto} | {EspacioE}
 "NVARCHAR" {return new Symbol (sym.NVARCHAR,yycolumn,yyline, yytext());}
 "MONEY" {return new Symbol (sym.MONEY,yycolumn,yyline, yytext());}
 "DATETIME" {return new Symbol (sym.DATETIME,yycolumn,yyline, yytext());}
+"DELAYED_DURABILITY" {return new Symbol (sym.DELAYED_DURABILITY,yycolumn,yyline, yytext());}
 
 /*ESPACIOS*/
 {Espacio}+ {/*Ignore*/}
