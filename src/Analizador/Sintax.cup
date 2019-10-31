@@ -163,7 +163,8 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     ProcOptionRec, Clause, ReplicationSP, StartSP, StmtSP, StmtSP1, StmtSP2, Function, Params, OrAlter, Param, Param_A, Param_B, As, ReadOnly, Type_Return, 
     Data, Table, SCT, DType, With, FuncOpc, FuncOpcA, FuncOpcB, FuncOpcC, VariableList, VariableLista, CursorDeclare, CursorDeclarea, 
     CursorDeclareb, CursorDeclarec, CursorDeclared, CursorDeclaree, CursorDeclaref, CursorDeclareg, InicialB, NFR1, NFR2,ColumnDefV,ColumnDefX,ColumnDefW,ColumnDefZ,
-    ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes;
+    ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes,
+    NameDB, FileDB, FinalTran;
  
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -174,13 +175,15 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
      
     Inicial ::= InicialA |;
 
-    InicialA ::= DML Inicial | DDL Final Inicial | TCL Inicial | TSQL Final Inicial | USE Object4 Final Inicial;
+    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | TSQL Final Inicial | USE Object4 Final Inicial;
+
+    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | TSQL Final Inicial | USE Object4 Final Inicial| SavePoint Final;
 
     DML ::= Select Final | Insert Final | Delete Final | Update Final | error Final;
 
-    DDL ::= Create | Alter | Drop | Truncate;
+    DDL ::= Create Final| Alter Final | Drop Final | Truncate Final;
 
-    TCL ::= BeginTran Final| Rollback Final| Commit Final| SavePoint Final;
+    TCL ::= BeginTran Final InicialA FinalTran;
 
     TSQL ::= CursorDeclare | ExecProcedure;
 
@@ -387,7 +390,11 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     FileSpecs ::= FileSpec Coma FileSpecs | FileSpec;
 
-    FileSpec ::= Apertura_de_paréntesis NAME Igual String Coma FILENAME Igual String Optionals Cierre_de_paréntesis;
+    FileSpec ::= Apertura_de_paréntesis NameDB Igual String Coma FileDB Igual String Optionals Cierre_de_paréntesis;
+
+    NameDB ::= NAME|NAMES;
+
+    FileDB ::= FILE|FILENAME;
 
     COLLATEDB ::= COLLATE ID |;
 
@@ -543,13 +550,15 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     AlterTableDropC ::= Coma AlterTableDropA AlterTableDropC |;
 
-    BeginTran ::= BEGIN TranName BeginTranA;
+    BeginTran ::= BEGIN TranName BeginTranA; //FinalTran;
 
     BeginTranA ::= Name BeginTranB |;
 
     BeginTranB ::= WITH MARK BeginTranC |;
 
     BeginTranC ::= String |;
+
+    FinalTran ::= Commit Final|Rollback Final;
 
     SavePoint ::= SAVE TranName Name;
 
