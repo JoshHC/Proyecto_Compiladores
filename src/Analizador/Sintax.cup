@@ -263,7 +263,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     ExpresionD ::= Apertura_de_paréntesis Expresion PredicadoC Cierre_de_paréntesis | ExpresionE;
 
-    ExpresionE ::= Object4 CallFunction| Int | Float | String | Bit | NULL | Variable
+    ExpresionE ::= Object4 CallFunction| Int | Float | String | Bit | NULL | Variable 
         | SUM Apertura_de_paréntesis ExpresionF
 	| AVG Apertura_de_paréntesis ExpresionF
 	| MIN Apertura_de_paréntesis ExpresionF
@@ -652,7 +652,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     
     OrAlter ::= OR ALTER|;
     
-    Param ::= Variable As Tipo_datoA ReadOnly;
+    Param ::= Variable As Expresion ReadOnly;
 
     As ::= AS|;
     
@@ -686,7 +686,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
  
     EXECUTE_AS_CLAUSE ::= ClauseExec AS Clause;
 
-    ExecProcedure ::= ClauseExec Object2 | ClauseExec Object2 Apertura_de_paréntesis RepeatProcedure Cierre_de_paréntesis | ClauseExec Object2 RepeatProcedure;
+    ExecProcedure ::= ClauseExec Object4 | ClauseExec Object4 Apertura_de_paréntesis RepeatProcedure Cierre_de_paréntesis | ClauseExec Object4 RepeatProcedure;
     
     RepeatProcedure ::= Variable Igual Data_Type RepeatProcedureA | Data_Type RepeatProcedureA; 
 
