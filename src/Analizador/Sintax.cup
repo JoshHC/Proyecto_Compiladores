@@ -175,17 +175,15 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
      
     Inicial ::= InicialA |;
 
-    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | TSQL Final Inicial | USE Object4 Final Inicial;
+    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object4 Final Inicial;
 
-    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | TSQL Final Inicial | USE Object4 Final Inicial| SavePoint Final InicialB;
+    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object4 Final Inicial| SavePoint Final InicialB;
 
-    DML ::= Select Final | Insert Final | Delete Final | Update Final | error Final;
+    DML ::= Delete Final | error Final;
 
-    DDL ::= Create Final| Alter Final | Drop Final | Truncate Final | error;
+    DDL ::= Alter Final | error;
 
     TCL ::= BeginTran Final InicialB FinalTran;
-
-    TSQL ::= CursorDeclare | ExecProcedure;
 
     Final ::= Punto_y_coma | GO | PYCGO;
 
@@ -211,7 +209,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Tipo_datoD ::= Tipo_datoA | Apertura_de_corchetes Tipo_datoA Cierre_de_corchetes;
 
-    Tipo_datoA ::= VARCHAR DataOptional | INTEGER | FLOAT | DATE | BIT | DOUBLE | CHAR DataOptional | CURSOR | NCHAR DataOptional | REAL | TIME | INT | DECIMAL | SMALLINT | NUMERIC | NVARCHAR DataOptional | MONEY | DATETIME | NULL;
+    Tipo_datoA ::= VARCHAR DataOptional | INTEGER | FLOAT | DATE | BIT | DOUBLE | CHAR DataOptional | CURSOR | NCHAR DataOptional | REAL | TIME | INT | DECIMAL | SMALLINT | NUMERIC | NVARCHAR  | MONEY | DATETIME | NULL;
 
     Tipo_datoB ::= Apertura_de_paréntesis Int Tipo_datoC Cierre_de_paréntesis |;
 
