@@ -164,7 +164,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     Data, Table, SCT, DType, With, FuncOpc, FuncOpcA, FuncOpcB, FuncOpcC, VariableList, VariableLista, CursorDeclare, CursorDeclarea, 
     CursorDeclareb, CursorDeclarec, CursorDeclared, CursorDeclaree, CursorDeclaref, CursorDeclareg, InicialB, NFR1, NFR2,ColumnDefV,ColumnDefX,ColumnDefW,ColumnDefZ,
     ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes,
-    NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction;
+    NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional;
  
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -211,11 +211,13 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Tipo_datoD ::= Tipo_datoA | Apertura_de_corchetes Tipo_datoA Cierre_de_corchetes;
 
-    Tipo_datoA ::= VARCHAR | INTEGER | FLOAT | DATE | BIT | DOUBLE | CHAR | CURSOR | NCHAR | REAL | TIME | INT | DECIMAL | SMALLINT | NUMERIC | NVARCHAR | MONEY | DATETIME;
+    Tipo_datoA ::= VARCHAR DataOptional | INTEGER | FLOAT | DATE | BIT | DOUBLE | CHAR DataOptional | CURSOR | NCHAR DataOptional | REAL | TIME | INT | DECIMAL | SMALLINT | NUMERIC | NVARCHAR DataOptional | MONEY | DATETIME | NULL;
 
     Tipo_datoB ::= Apertura_de_paréntesis Int Tipo_datoC Cierre_de_paréntesis |;
 
     Tipo_datoC ::= Coma Int |;
+
+    DataOptional ::= Apertura_de_paréntesis Int Cierre_de_paréntesis|;
 
     Drop ::= DROP DropA;
     
@@ -272,7 +274,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     CallFunction ::= Apertura_de_paréntesis FunctionContent Cierre_de_paréntesis|;
 
-    FunctionContent ::= DType FunctionContentA;
+    FunctionContent ::= Tipo_dato FunctionContentA;
 
     FunctionContentA ::= Coma FunctionContent|;
 
@@ -672,7 +674,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     DTypes ::= Apertura_de_paréntesis DType Cierre_de_paréntesis | DType;
     
-    DType ::= Variable | Int | Float | String | Bit;
+    DType ::= Variable | Int | Float | String | Bit | NULL;
         
     With ::= WITH FuncOpc|;
     
@@ -692,7 +694,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     RepeatProcedureA ::= Coma RepeatProcedure|;
 
-    Data_Type ::=  Int | Float | String | Bit;
+    Data_Type ::=  Int | Float | String | Bit | NULL;
 	
 	
 	
