@@ -520,7 +520,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Alter ::= ALTER AlterA;
 
-    AlterA ::= AlterTable | AlterUser | AlterDatabase | AlterView | Procedure | Function;
+    AlterA ::= AlterTable | AlterUser | AlterDatabase | AlterView | Function;
 
     AlterDatabase ::= DATABASE AlterDBA AlterDBB;
 
