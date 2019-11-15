@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -34,8 +35,9 @@ public class FormPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form FormPrincipal
      */
-    public FormPrincipal() {
+    public FormPrincipal() throws Exception {
         initComponents();
+        generarTodo();
         this.setLocationRelativeTo(null);
     }
 
@@ -760,6 +762,34 @@ public class FormPrincipal extends javax.swing.JFrame {
         bw.close();
 
     }
+    
+    public void generarTodo() throws IOException, Exception{
+        String syntaxRoute = "", aux = "", SyntaxLexer = "";
+        String absolutePath = new File(".").getAbsolutePath();
+        absolutePath = absolutePath.substring(0, absolutePath.length() - 1);
+        syntaxRoute = absolutePath;
+        aux = absolutePath;
+        SyntaxLexer = absolutePath;
+        SyntaxLexer += "src\\Analizador\\Alexico.flex";
+        absolutePath += "src\\Analizador\\LexerCup.flex";
+        syntaxRoute += "src\\Analizador\\Sintax.cup";
+        String[] routesS = {"-parser", "Sintax", syntaxRoute};
+
+        File file = new File(absolutePath);
+        JFlex.Main.generate(file);
+        java_cup.Main.main(routesS);
+
+        Path symRoute_aux = Paths.get(aux + "/src/Analizador/sym.java");
+        Path symRoute = Paths.get(aux + "/sym.java");
+        Files.deleteIfExists(symRoute_aux);
+        Files.move(symRoute, symRoute_aux);
+
+        Path sinRoute_aux = Paths.get(aux + "/src/Analizador/Sintax.java");
+        Path sinRoute = Paths.get(aux + "/Sintax.java");
+        Files.deleteIfExists(sinRoute_aux);
+        Files.move(sinRoute, sinRoute_aux);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -790,7 +820,11 @@ public class FormPrincipal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FormPrincipal().setVisible(true);
+                try {
+                    new FormPrincipal().setVisible(true);
+                } catch (Exception ex) {
+                    Logger.getLogger(FormPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

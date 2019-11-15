@@ -168,16 +168,16 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
  
     precedence right Not;
     precedence left Apertura_de_paréntesis;
-    precedence right Object4;
+    precedence right Object3;
     precedence left Object2;
 
     start with Inicial;
      
     Inicial ::= InicialA |;
 
-    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object4 Final Inicial;
+    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial;
 
-    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object4 Final Inicial| SavePoint Final InicialB;
+    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial| SavePoint Final InicialB;
 
     DML ::= Delete Final | error Final;
 
@@ -196,10 +196,6 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     Object3 ::= ID Object3A;
 
     Object3A ::= Punto Object2 |;
-
-    Object4 ::= ID Object4A;
-
-    Object4A ::= Punto Object3 |;
 
     IFE ::= IF EXISTS |;
 
@@ -263,7 +259,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     ExpresionD ::= Apertura_de_paréntesis Expresion PredicadoC Cierre_de_paréntesis | ExpresionE;
 
-    ExpresionE ::= Object4 CallFunction| Int | Float | String | Bit | NULL | Variable 
+    ExpresionE ::= Object3 CallFunction| Int | Float | String | Bit | NULL | Variable 
         | SUM Apertura_de_paréntesis ExpresionF
 	| AVG Apertura_de_paréntesis ExpresionF
 	| MIN Apertura_de_paréntesis ExpresionF
@@ -276,7 +272,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     FunctionContentA ::= Coma FunctionContent|;
 
-    ExpresionF ::= Object4 Cierre_de_paréntesis
+    ExpresionF ::= Object3 Cierre_de_paréntesis
 	| Int Cierre_de_paréntesis
 	| Multiplicacion Cierre_de_paréntesis;
 
@@ -686,7 +682,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
  
     EXECUTE_AS_CLAUSE ::= ClauseExec AS Clause;
 
-    ExecProcedure ::= ClauseExec Object4 | ClauseExec Object4 Apertura_de_paréntesis RepeatProcedure Cierre_de_paréntesis | ClauseExec Object4 RepeatProcedure;
+    ExecProcedure ::= ClauseExec Object3 | ClauseExec Object3 Apertura_de_paréntesis RepeatProcedure Cierre_de_paréntesis | ClauseExec Object3 RepeatProcedure;
     
     RepeatProcedure ::= Variable Igual Data_Type RepeatProcedureA | Data_Type RepeatProcedureA; 
 
