@@ -165,7 +165,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     CursorDeclareb, CursorDeclarec, CursorDeclared, CursorDeclaree, CursorDeclaref, CursorDeclareg, InicialB, NFR1, NFR2,ColumnDefV,ColumnDefX,ColumnDefW,ColumnDefZ,
     ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes,
     NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional, 
-    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Igualacion;
+    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable;
  
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -699,6 +699,5 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 	
     Variable_list ::= Coma Variable Tipo_variable Variable_list |;
     
-    Set_variable ::= SET Variable Igualacion Expresion;
+    Set_variable ::= SET Variable Igual Expresion;
     
-    Igualacion ::= Igual | Suma Igual | Resta Igual | Multiplicacion Igual | Division Igual;
