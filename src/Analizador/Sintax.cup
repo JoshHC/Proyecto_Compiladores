@@ -164,7 +164,8 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     Data, Table, SCT, DType, With, FuncOpc, FuncOpcA, FuncOpcB, FuncOpcC, VariableList, VariableLista, CursorDeclare, CursorDeclarea, 
     CursorDeclareb, CursorDeclarec, CursorDeclared, CursorDeclaree, CursorDeclaref, CursorDeclareg, InicialB, NFR1, NFR2,ColumnDefV,ColumnDefX,ColumnDefW,ColumnDefZ,
     ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes,
-    NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional;
+    NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional, 
+    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Igualacion;
  
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -175,9 +176,9 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
      
     Inicial ::= InicialA |;
 
-    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial;
+    InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial | Declare_variable Final Inicial | Set_variable Final Inicial;
 
-    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial| SavePoint Final InicialB;
+    InicialB ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial| SavePoint Final InicialB | Declare_variable Final Inicial | Set_variable Final Inicial;
 
     DML ::= Delete Final | error Final;
 
@@ -689,11 +690,15 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     RepeatProcedureA ::= Coma RepeatProcedure|;
 
     Data_Type ::=  Int | Float | String | Bit | NULL;
-	
-	
-	
-	
 
-    
+    Declare_variable ::= DECLARE Variable Tipo_variable Variable_list;
 
+    Tipo_variable ::=  As Tipo_dato valor;
+
+    valor ::= Igual Data_Type | ;
+	
+    Variable_list ::= Coma Variable Tipo_variable Variable_list |;
     
+    Set_variable ::= SET Variable Igualacion Expresion;
+    
+    Igualacion ::= Igual | Suma Igual | Resta Igual | Multiplicacion Igual | Division Igual;

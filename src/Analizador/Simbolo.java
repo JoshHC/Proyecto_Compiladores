@@ -14,12 +14,20 @@ public class Simbolo {
     String Ambito, Ambito_Objeto, Tipo, Tipo_Dato, ID, Valor, Tipo_Retorno;
 
     public Simbolo(String Ambito, String Ambito_Objeto, String Tipo, String Tipo_Dato, String ID, String Valor, String Tipo_Retorno) {
+        
+        //Ambito actual donde se encuentran
         this.Ambito = Ambito;
+        //Solamente parámetros
         this.Ambito_Objeto = Ambito_Objeto;
-        this.Tipo = Tipo;
+        //Tipo de Objeto
+        this.Tipo = Tipo;   
+        //Int, Float.. etc.
         this.Tipo_Dato = Tipo_Dato;
+        //Identificador
         this.ID = ID;
+        //Valor solo en casos numericos o de operaciones
         this.Valor = Valor;
+        //Tipo de retorno de la funcion
         this.Tipo_Retorno = Tipo_Retorno;
     }
 
