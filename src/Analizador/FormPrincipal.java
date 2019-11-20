@@ -31,13 +31,14 @@ import javax.swing.JOptionPane;
  * @author josue
  */
 public class FormPrincipal extends javax.swing.JFrame {
-
+    LinkedList<Simbolo> tabla = new LinkedList<>();
     /**
      * Creates new form FormPrincipal
      */
     public FormPrincipal() throws Exception {
         initComponents();
         generarTodo();
+        llenarTabla();
         this.setLocationRelativeTo(null);
     }
 
@@ -657,6 +658,7 @@ public class FormPrincipal extends javax.swing.JFrame {
 
         LinkedList<String> ErroresSintacticos = null;
         Sintax s = new Sintax(new Analizador.LexerCup(new StringReader(data)));
+        
         String Contenido = "";
         
         txtResultado.setText("");        
@@ -788,6 +790,187 @@ public class FormPrincipal extends javax.swing.JFrame {
         Path sinRoute = Paths.get(aux + "/Sintax.java");
         Files.deleteIfExists(sinRoute_aux);
         Files.move(sinRoute, sinRoute_aux);
+    }
+    
+    private void llenarTabla(){
+        tabla.add(new Simbolo("","","","","","","",0,0));
+        //Ambito, Ambito_objeto, Tipo, Tipo_dato, ID, Valor, Tipo_retorno, Dim1, Dim2
+        tabla.add(new Simbolo("","","database","","master","","",0,0));
+        tabla.add(new Simbolo("master","","schema","","dbo","","",0,0));
+        //
+        //DB Motocicleta
+        tabla.add(new Simbolo("","","database","","Motocicleta","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","","schema","","dbo","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","","schema","","NASCAR","","",0,0));
+        //Tabla Carrera
+        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Carrera","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","NombreGP","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","Año","","",4,0));
+        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","FechaHoraInicio","","",25,0));
+        tabla.add(new Simbolo("Motocicleta","Carrera","column","int","NumVueltas","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","NombreCircuito","","",15,0));
+        //Tabla Circuito
+        tabla.add(new Simbolo("Motocicleta","NASCAR","table","Circuito","","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Nombre","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Pais","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Tipo","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Circuito","column","float","Longitud","","",4,1));
+        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Diseñador","","",20,0));
+        //Tabla Consultas
+        tabla.add(new Simbolo("Motocicleta","dbo","tabla","CONSULTAS_SQL","","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","CONSULTAS_SQL","column","int","ID_CONSULTA","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","CONSULTAS_SQL","column","varchar","CONSULTA","","",800,0));
+        tabla.add(new Simbolo("","","","","","","",0,0));
+        //Tabla Escuderia
+        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Escuderia","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","Nombre","","",20,0));
+        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","Manager","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","FabricanteMotor","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","Sede","","",15,0));
+        //Tabla Piloto
+        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Piloto","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Piloto","column","int","Codigo","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","Nacionalidad","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","FechaNacimiento","","",25,0));
+        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","CarreraDebut","","",20,0));
+        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","NombreEscuderia","","",20,0));
+        //Tabla Resultado
+        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Resultado","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Resultado","column","varchar","NombreGP","","",15,0));
+        tabla.add(new Simbolo("Motocicleta","Resultado","column","varchar","Año","","",4,0));
+        tabla.add(new Simbolo("Motocicleta","Resultado","column","int","CodPiloto","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Resultado","column","int","Puesto","","",0,0));
+        tabla.add(new Simbolo("Motocicleta","Resultado","column","varchar","DistanciaGanador","","",25,0));
+        //
+        //DB Veterinaria
+        tabla.add(new Simbolo("","","database","","Veterinaria","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","","schema","","dbo","","",0,0));
+        //Tabla CalendarioVacunacion
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","CalendarioVacunacion","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","CalendarioVacunacion","column","varchar","Fecha","","",8,0));
+        tabla.add(new Simbolo("Veterinaria","CalendarioVacunacion","column","varchar","Enfermedad","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","CalendarioVacunacion","column","varchar","CodigoPaciente","","",8,0));
+        //Tabla Cliente
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Cliente","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","DPI","","",13,0));
+        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","NIT","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Numero","","",8,0));
+        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Direccion","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Correo","","",800,0));
+        //Table Clinica
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Clinica","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Clinica","column","int","Codigo","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Clinica","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Clinica","column","varchar","Direccion","","",800,0));
+        //Tabla Consulta
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Consulta","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","Sala","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioFijo","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","int","NumeroOperaciones","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","int","NumeroVacunas","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","int","NumeroPruebasEspecificas","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioOperaciones","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioVacunas","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioPruebasEspecificas","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","CodigoPaciente","","",8,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","NombreVeterinario","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","FECHA","","",8,0));
+        //Tabla Diagnostico
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Diagnostico","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","Resultado","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","PruebaEspecifica","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","Lugar","","",15,0));
+        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","FechaPrueba","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","CodigoPaciente","","",8,0));
+        //Tabla Factura
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Factura","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Factura","column","varchar","Numero","","",10,0));
+        tabla.add(new Simbolo("Veterinaria","Factura","column","varchar","Detalle","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Factura","column","float","Importe","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Factura","column","float","TOTAL","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Factura","column","int","CodigoClinica","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Factura","column","varchar","NITCliente","","",12,0));
+        //Tabla HistorialMedico
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","HistorialMedico","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","MotivoVisita","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","FechaVisita","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","CodigoPaciente","","",8,0));
+        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","ResultadoDiagnostico","","",20,0));
+        //Tabla Laboratorio
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Laboratorio","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Laboratorio","column","varchar","NIT","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","Laboratorio","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Laboratorio","column","varchar","Direccion","","",800,0));
+        //Tabla Medicina
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Medicina","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Medicina","column","int","Codigo","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Medicina","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Medicina","column","numeric","Codigo","","",10,2));
+        //Tabla OperacionQuirurgica
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","OperacionQuirurgica","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","int","CodigoClinica","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Quirofano","","",15,0));
+        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","NombreVeterinario","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Fecha","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Duracion","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Observaciones","","",800,0));
+        //Tabla Paciente
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Paciente","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Codigo","","",8,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Nombre","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Especie","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Raza","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","ColorPelo","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","FechaNacimiento","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","PesoMedio","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","int","CodigoClinica","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","NITCliente","","",12,0));
+        //Tabla Producto
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Producto","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Producto","column","int","Codigo","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Producto","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Producto","column","numeric","PrecioUnitario","","",10,2));
+        //Tabla Proveedor
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Proveedor","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Proveedor","column","varchar","NIT","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","Proveedor","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Proveedor","column","varchar","Direccion","","",800,0));
+        //Tabla SuministraFarmacia
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","SuministraFarmacia","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","SuministraFarmacia","column","varchar","NITLaboratorio","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","SuministraFarmacia","column","int","CodigoMedicina","","",0,0));
+        //Tabla SuministraTienda
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","SuministraTienda","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","SuministraTienda","column","varchar","NITProveedor","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","SuministraTienda","column","int","CodigoProducto","","",0,0));
+        //Tabla Tratamiento
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Tratamiento","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Nombre","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Dosificacion","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Duracion","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Resultado","","",20,0));
+        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","CodigoPaciente","","",8,0));
+        //Tabla VentaFarmacia
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","VentaFarmacia","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","varchar","NITCliente","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","int","CodigoMedicina","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","varchar","Fecha","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","int","CodigoClinica","","",0,0));
+        //Tabla VentaTienda
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","VentaTienda","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","varchar","NITCliente","","",12,0));
+        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","int","CodigoMedicina","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","varchar","Fecha","","",800,0));
+        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","int","CodigoClinica","","",0,0));
+        //Tabla Veterinario
+        tabla.add(new Simbolo("Veterinaria","dbo","table","","Veterinario","","",0,0));
+        tabla.add(new Simbolo("Veterinaria","Veterinario","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","SalarioBase","","",4,2));
+        tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","Salario","","",4,2));
+        
+        //tabla.add(new Simbolo("","","","","","","",0,0));
     }
     
     /**

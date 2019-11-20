@@ -11,12 +11,16 @@ parser code
 {: 
 
     public LinkedList<String> SyntacticErrors = new LinkedList<String>();
+    public LinkedList<Simbolo> Tabladesimbolos;
     private Symbol s;
 
     public final Class getSymbolContainer() {
-    return sym.class;
+        return sym.class;
     }
 
+    public void getInitialTS(LinkedList<Simbolo> temp){
+        Tabladesimbolos = temp;
+    }
 
     public void syntax_error(Symbol cur_token){
         java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) cur_token);
