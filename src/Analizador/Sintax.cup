@@ -166,7 +166,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional, 
     Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Simbolo;
  
-    non terminal String ID;
+    non terminal String[2] ID;
 
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -189,8 +189,9 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Final ::= Punto_y_coma | GO | PYCGO;
 
-    ID ::= Identificador:i {:
-                            RESULT = new String("Prueba");
+    ID ::= Identificador:i {: RESULT = new String[2];
+                              RESULT[0] = new String(i.toString());
+                              RESULT[1] = new String("Identificador");
     :}| Apertura_de_corchetes Identificador Cierre_de_corchetes;
 
     Object2 ::= ID Object2A;
