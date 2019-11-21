@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -664,8 +665,9 @@ public class FormPrincipal extends javax.swing.JFrame {
         
         txtResultado.setText("");        
         //Se parsea el archivo
-        s.debug_parse();
+        s.SetTabladeSimbolos(tabla);
         s.parse();
+        EscribirTS();
         //Se agrega la lista de errores sintacticos
         ErroresSintacticos = s.SyntacticErrors;
         //Se concatenan los errores en una variable para luego asignarlos al cuadro de texto
@@ -969,6 +971,130 @@ public class FormPrincipal extends javax.swing.JFrame {
         tabla.add(new Simbolo("Veterinaria","Veterinario","column","varchar","Nombre","","",50,0));
         tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","SalarioBase","","",4,2));
         tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","Salario","","",4,2));
+    }
+    
+    public void EscribirTS() throws IOException {
+        //Se reemplaza el salto de línea por un salto de Línea que reconozca el BufferedWriter
+        String path = "C:\\Users\\Admin\\Desktop\\TablaSimbolos.out";
+
+        File ArchivoOut = new File(path);
+        FileWriter writer = new FileWriter(ArchivoOut);
+        PrintWriter pw = new PrintWriter(ArchivoOut);
+
+        String linea = "";
+        linea = "|Ambito                  |Ambito_Objeto          |Tipo           |Tipo_Dato      "
+                + "|ID                             |Valor  |Tipo_Retorno   |Dimension1 |Dimension2 |";
+        pw.write(linea);
+        
+        linea = "-----------------------------------------------------------------------------------"
+                + "-------------------------------------------------------------------------------";
+        pw.write(linea);
+        
+        for (Simbolo item : tabla) 
+        {            
+            float cociente;
+            linea = "";
+            
+            cociente = (item.Ambito.length()+1)/4;
+            // Impresion de Ambito con 6 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.Ambito + "\t\t\t\t\t\t"; break;
+                case 1: linea += "|" + item.Ambito + "\t\t\t\t\t"; break;
+                case 2: linea += "|" + item.Ambito + "\t\t\t\t"; break;
+                case 3: linea += "|" + item.Ambito + "\t\t\t"; break;
+                case 4: linea += "|" + item.Ambito + "\t\t"; break;
+                case 5: linea += "|" + item.Ambito + "\t"; break;
+                default: linea += "|" + item.Ambito; break;
+            }
+            
+            cociente = (item.Ambito_Objeto.length()+1)/4;
+            // Impresion de Ambito_Objeto con 6 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.Ambito_Objeto + "\t\t\t\t\t\t"; break;
+                case 1: linea += "|" + item.Ambito_Objeto + "\t\t\t\t\t"; break;
+                case 2: linea += "|" + item.Ambito_Objeto + "\t\t\t\t"; break;
+                case 3: linea += "|" + item.Ambito_Objeto + "\t\t\t"; break;
+                case 4: linea += "|" + item.Ambito_Objeto + "\t\t"; break;
+                case 5: linea += "|" + item.Ambito_Objeto + "\t"; break;
+                default: linea += "|" + item.Ambito_Objeto; break;
+            }
+            
+            cociente = (item.Tipo.length()+1)/4;
+            // Impresion de Tipo con 4 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.Tipo + "\t\t\t\t"; break;
+                case 1: linea += "|" + item.Tipo + "\t\t\t"; break;
+                case 2: linea += "|" + item.Tipo + "\t\t"; break;
+                case 3: linea += "|" + item.Tipo + "\t"; break;
+                default: linea += "|" + item.Tipo; break;
+            }
+            
+            cociente = (item.Tipo_Dato.length()+1)/4;
+            // Impresion de Tipo_Dato con 4 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.Tipo_Dato + "\t\t\t\t"; break;
+                case 1: linea += "|" + item.Tipo_Dato + "\t\t\t"; break;
+                case 2: linea += "|" + item.Tipo_Dato + "\t\t"; break;
+                case 3: linea += "|" + item.Tipo_Dato + "\t"; break;
+                default: linea += "|" + item.Tipo_Dato; break;
+            }
+            
+            cociente = (item.ID.length()+1)/4;
+            // Impresion de ID con 8 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.ID + "\t\t\t\t\t\t\t\t"; break;
+                case 1: linea += "|" + item.ID + "\t\t\t\t\t\t\t"; break;
+                case 2: linea += "|" + item.ID + "\t\t\t\t\t\t"; break;
+                case 3: linea += "|" + item.ID + "\t\t\t\t\t"; break;
+                case 4: linea += "|" + item.ID + "\t\t\t\t"; break;
+                case 5: linea += "|" + item.ID + "\t\t\t"; break;
+                case 6: linea += "|" + item.ID + "\t\t"; break;
+                case 7: linea += "|" + item.ID + "\t"; break;
+                default: linea += "|" + item.ID; break;
+            }
+            
+            cociente = (item.Valor.length()+1)/4;
+            // Impresion de Valor con 2 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.Valor + "\t\t"; break;
+                case 1: linea += "|" + item.Valor + "\t"; break;
+                default: linea += "|" + item.Valor; break;
+            }
+            
+            cociente = (item.Tipo_Retorno.length()+1)/4;
+            // Impresion de Tipo_Retorno con 4 tabulares
+            switch ((int)Math.floor(cociente))
+            {
+                case 0: linea += "|" + item.Tipo_Retorno + "\t\t\t\t"; break;
+                case 1: linea += "|" + item.Tipo_Retorno + "\t\t\t"; break;
+                case 2: linea += "|" + item.Tipo_Retorno + "\t\t"; break;
+                case 3: linea += "|" + item.Tipo_Retorno + "\t"; break;
+                default: linea += "|" + item.Tipo_Retorno; break;
+            }
+            
+            // Impresion de Dimension1 con 3 tabulares
+            if (item.Dimension1 < 100) linea += "|" + item.Dimension1 + "\t\t\t";
+            else if (item.Dimension1 >= 100 && item.Dimension1 < 1000000) linea += "|" + item.Dimension1 + "\t\t";
+            else linea += "|" + item.Dimension1 + "\t";
+
+            // Impresion de Dimension2 con 3 tabulares
+            if (item.Dimension2 < 100) linea += "|" + item.Dimension2 + "\t\t\t|";
+            else if (item.Dimension2 >= 100 && item.Dimension2 < 1000000) linea += "|" + item.Dimension2 + "\t\t|";
+            else linea += "|" + item.Dimension2 + "\t|";
+
+            pw.write(linea);
+        }
+
+        pw.append("FIN DE TABLA DE SIMBOLOS");
+
+        pw.close();
+        writer.close();
     }
     
     /**

@@ -11,10 +11,17 @@ parser code
 {: 
 
     public LinkedList<String> SyntacticErrors = new LinkedList<String>();
+    public LinkedList<Simbolo> Tabladesimbolos = new LinkedList<Simbolo>();
     private Symbol s;
 
     public final Class getSymbolContainer() {
         return sym.class;
+    }
+
+
+    public void SetTabladeSimbolos(LinkedList<Simbolo> Tabla)
+    {
+        Tabladesimbolos = Tabla;
     }
 
     public void syntax_error(Symbol cur_token){
@@ -116,6 +123,8 @@ parser code
 	  return true;
   }
 
+
+
 :};
 
 terminal Reservadas,Igual,Suma,Resta,Multiplicacion,Division,Identificador,Numero,Comentario,ComentarioE,Int,Bit,String,StringE,
@@ -175,7 +184,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     start with Inicial;
      
-    Inicial ::= InicialA |ID;
+    Inicial ::= InicialA {:}|ID;
 
     InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial | Declare_variable Final Inicial | Set_variable Final Inicial;
 
@@ -189,9 +198,10 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Final ::= Punto_y_coma | GO | PYCGO;
 
-    ID ::= Identificador:i {: RESULT = new Simbolo();
+    ID ::= Identificador:i Inicial {: RESULT = new Simbolo();
                               RESULT.setID(i.toString());
                               RESULT.setValor("Identificador");
+                              //se pueden sintetizar valores pero queda pendiente como heredar
     :}| Apertura_de_corchetes Identificador Cierre_de_corchetes;
 
     Object2 ::= ID Object2A;
