@@ -165,7 +165,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     CursorDeclareb, CursorDeclarec, CursorDeclared, CursorDeclaree, CursorDeclaref, CursorDeclareg, InicialB, NFR1, NFR2,ColumnDefV,ColumnDefX,ColumnDefW,ColumnDefZ,
     ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes,
     NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional, 
-    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Igualacion;
+    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Igualacion, T;
  
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -188,7 +188,9 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Final ::= Punto_y_coma | GO | PYCGO;
 
-    ID ::= Identificador | Apertura_de_corchetes Identificador Cierre_de_corchetes;
+    ID ::= Identificador {:Simbolo T = new Simbolo("Identificador de Prueba");
+                           T.setID("Prueba");
+                            RESULT = T;:}| Apertura_de_corchetes Identificador Cierre_de_corchetes;
 
     Object2 ::= ID Object2A;
 

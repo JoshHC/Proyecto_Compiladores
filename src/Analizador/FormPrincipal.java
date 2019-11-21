@@ -42,6 +42,7 @@ public class FormPrincipal extends javax.swing.JFrame {
     }
 
     public TOKEN Token = new TOKEN();
+  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -789,6 +790,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         Files.deleteIfExists(sinRoute_aux);
         Files.move(sinRoute, sinRoute_aux);
     }
+    
+    
     
     /**
      * @param args the command line arguments

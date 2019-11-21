@@ -31,6 +31,10 @@ public class Simbolo {
         this.Tipo_Retorno = Tipo_Retorno;
     }
 
+    public Simbolo(String ID) {
+        this.ID = ID;
+    }
+
     public String getAmbito() {
         return Ambito;
     }
