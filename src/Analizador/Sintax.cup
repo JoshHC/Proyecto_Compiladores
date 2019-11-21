@@ -11,15 +11,10 @@ parser code
 {: 
 
     public LinkedList<String> SyntacticErrors = new LinkedList<String>();
-    public LinkedList<Simbolo> Tabladesimbolos;
     private Symbol s;
 
     public final Class getSymbolContainer() {
         return sym.class;
-    }
-
-    public void getInitialTS(LinkedList<Simbolo> temp){
-        Tabladesimbolos = temp;
     }
 
     public void syntax_error(Symbol cur_token){
@@ -149,7 +144,7 @@ terminal Reservadas,Igual,Suma,Resta,Multiplicacion,Division,Identificador,Numer
          RETURNS,SCHEMABINDING,CALLED,INLINE,CALLER,SELF,OWNER,RECOMPILE,MARK,FORWARD_ONLY,STATIC,KEYSET,DYNAMIC,FAST_FORWARD,READ_ONLY,SCROLL_LOCKS,OPTIMISTIC,
          TYPE_WARNING,NAME,FILENAME,KB,GB,TB,MB,MAXSIZE,UNLIMITED,FILEGROWTH,MODULAR, PYCGO, NVARCHAR, MONEY, DATETIME, DELAYED_DURABILITY;
 
-non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final, ID, Object2, Object2A, Object3, Object3A, Object4, Object4A, IFE, Variable, Tipo_dato, 
+non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,Object2, Object2A, Object3, Object3A, Object4, Object4A, IFE, Variable, Tipo_dato, 
     Tipo_datoD, Tipo_datoA, Tipo_datoB, Tipo_datoC, Drop, DropA, DropTable, DropTableA, DropUser, DropDatabase, DropDatabaseA, DropView, DropViewA,
     DropIndex, DropIndexA, DropIndexB, Truncate, Alias, AliasA, Expresion, ExpresionA, ExpresionB, ExpresionC, ExpresionD, ExpresionE, ExpresionF,
     Not, Top, TopA, Expresiones, SearchCondition, SearchConditionA, Predicado, PredicadoA, PredicadoC, Where, SelectColumns, SelectColumnsA, ColumnList,
@@ -169,8 +164,10 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     CursorDeclareb, CursorDeclarec, CursorDeclared, CursorDeclaree, CursorDeclaref, CursorDeclareg, InicialB, NFR1, NFR2,ColumnDefV,ColumnDefX,ColumnDefW,ColumnDefZ,
     ColumnDefY, Sizew, Sizenw, ExecProcedure, RepeatProcedure, RepeatProcedureA, Data_Type, EXECUTE_AS_CLAUSE, CallFunction, FunctionContent, FunctionContentA, DTypes,
     NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional, 
-    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable;
+    Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Simbolo;
  
+    non terminal LinkedList<Simbolo> ID; 
+
     precedence right Not;
     precedence left Apertura_de_paréntesis;
     precedence right Object3;
@@ -192,9 +189,10 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Final ::= Punto_y_coma | GO | PYCGO;
 
-    ID ::= Identificador {:Simbolo T = new Simbolo("Identificador de Prueba");
-                           T.setID("Prueba");
-                            RESULT = T;:}| Apertura_de_corchetes Identificador Cierre_de_corchetes;
+    ID ::= Identificador:i {:Simbolo T = new Simbolo(i.toString());
+                            RESULT = new LinkedList<Simbolo>();
+                            RESULT.add(T);
+    :}| Apertura_de_corchetes Identificador Cierre_de_corchetes;
 
     Object2 ::= ID Object2A;
 

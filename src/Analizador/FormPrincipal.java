@@ -664,7 +664,7 @@ public class FormPrincipal extends javax.swing.JFrame {
         
         txtResultado.setText("");        
         //Se parsea el archivo
-        //PROBAR CON debug_parse();
+        s.debug_parse();
         s.parse();
         //Se agrega la lista de errores sintacticos
         ErroresSintacticos = s.SyntacticErrors;
@@ -799,50 +799,49 @@ public class FormPrincipal extends javax.swing.JFrame {
         tabla.add(new Simbolo("","","database","","master","","",0,0));
         tabla.add(new Simbolo("master","","schema","","dbo","","",0,0));
         //
-        //DB Motocicleta
-        tabla.add(new Simbolo("","","database","","Motocicleta","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","","schema","","dbo","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","","schema","","NASCAR","","",0,0));
+        //DB Motociclismo
+        tabla.add(new Simbolo("","","database","","Motociclismo","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","","schema","","dbo","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","","schema","","NASCAR","","",0,0));
         //Tabla Carrera
-        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Carrera","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","NombreGP","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","Año","","",4,0));
-        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","FechaHoraInicio","","",25,0));
-        tabla.add(new Simbolo("Motocicleta","Carrera","column","int","NumVueltas","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Carrera","column","varchar","NombreCircuito","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Carrera","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","NombreGP","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","Año","","",4,0));
+        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","FechaHoraInicio","","",25,0));
+        tabla.add(new Simbolo("Motociclismo","Carrera","column","int","NumVueltas","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","NombreCircuito","","",15,0));
         //Tabla Circuito
-        tabla.add(new Simbolo("Motocicleta","NASCAR","table","Circuito","","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Nombre","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Pais","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Tipo","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Circuito","column","float","Longitud","","",4,1));
-        tabla.add(new Simbolo("Motocicleta","Circuito","column","varchar","Diseñador","","",20,0));
+        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Circuito","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Nombre","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Pais","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Tipo","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Circuito","column","float","Longitud","","",4,1));
+        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Diseñador","","",20,0));
         //Tabla Consultas
-        tabla.add(new Simbolo("Motocicleta","dbo","tabla","CONSULTAS_SQL","","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","CONSULTAS_SQL","column","int","ID_CONSULTA","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","CONSULTAS_SQL","column","varchar","CONSULTA","","",800,0));
-        tabla.add(new Simbolo("","","","","","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","dbo","tabla","","CONSULTAS_SQL","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","CONSULTAS_SQL","column","int","ID_CONSULTA","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","CONSULTAS_SQL","column","varchar","CONSULTA","","",800,0));
         //Tabla Escuderia
-        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Escuderia","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","Nombre","","",20,0));
-        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","Manager","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","FabricanteMotor","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Escuderia","column","varchar","Sede","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Escuderia","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","Nombre","","",20,0));
+        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","Manager","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","FabricanteMotor","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","Sede","","",15,0));
         //Tabla Piloto
-        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Piloto","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Piloto","column","int","Codigo","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","Nacionalidad","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","FechaNacimiento","","",25,0));
-        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","CarreraDebut","","",20,0));
-        tabla.add(new Simbolo("Motocicleta","Piloto","column","varchar","NombreEscuderia","","",20,0));
+        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Piloto","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Piloto","column","int","Codigo","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","Nombre","","",50,0));
+        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","Nacionalidad","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","FechaNacimiento","","",25,0));
+        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","CarreraDebut","","",20,0));
+        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","NombreEscuderia","","",20,0));
         //Tabla Resultado
-        tabla.add(new Simbolo("Motocicleta","NASCAR","table","","Resultado","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Resultado","column","varchar","NombreGP","","",15,0));
-        tabla.add(new Simbolo("Motocicleta","Resultado","column","varchar","Año","","",4,0));
-        tabla.add(new Simbolo("Motocicleta","Resultado","column","int","CodPiloto","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Resultado","column","int","Puesto","","",0,0));
-        tabla.add(new Simbolo("Motocicleta","Resultado","column","varchar","DistanciaGanador","","",25,0));
+        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Resultado","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Resultado","column","varchar","NombreGP","","",15,0));
+        tabla.add(new Simbolo("Motociclismo","Resultado","column","varchar","Año","","",4,0));
+        tabla.add(new Simbolo("Motociclismo","Resultado","column","int","CodPiloto","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Resultado","column","int","Puesto","","",0,0));
+        tabla.add(new Simbolo("Motociclismo","Resultado","column","varchar","DistanciaGanador","","",25,0));
         //
         //DB Veterinaria
         tabla.add(new Simbolo("","","database","","Veterinaria","","",0,0));
@@ -970,8 +969,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         tabla.add(new Simbolo("Veterinaria","Veterinario","column","varchar","Nombre","","",50,0));
         tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","SalarioBase","","",4,2));
         tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","Salario","","",4,2));
-        
-        //tabla.add(new Simbolo("","","","","","","",0,0));
     }
     
     /**
