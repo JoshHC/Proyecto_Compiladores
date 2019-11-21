@@ -166,7 +166,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
     NameDB, FileDB, FinalTran, OnOff, CommitB, DropProcedure, DropProcedureA, DropFunction, DataOptional, 
     Declare_variable, Tipo_variable, valor, Variable_list, Set_variable, Simbolo;
  
-    non terminal LinkedList<Simbolo> ID; 
+    non terminal String ID;
 
     precedence right Not;
     precedence left Apertura_de_paréntesis;
@@ -175,7 +175,7 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     start with Inicial;
      
-    Inicial ::= InicialA |;
+    Inicial ::= InicialA |ID;
 
     InicialA ::= DML Inicial | DDL Inicial | TCL Inicial | USE Object3 Final Inicial | Declare_variable Final Inicial | Set_variable Final Inicial;
 
@@ -189,9 +189,8 @@ non terminal OperadoresBooleanos, Inicial, InicialA, DML, DDL, TCL, TSQL, Final,
 
     Final ::= Punto_y_coma | GO | PYCGO;
 
-    ID ::= Identificador:i {:Simbolo T = new Simbolo(i.toString());
-                            RESULT = new LinkedList<Simbolo>();
-                            RESULT.add(T);
+    ID ::= Identificador:i {:
+                            RESULT = new String("Prueba");
     :}| Apertura_de_corchetes Identificador Cierre_de_corchetes;
 
     Object2 ::= ID Object2A;
