@@ -36,8 +36,7 @@ public class Simbolo {
         this.Dimension2 = Dimension2;
     }
 
-    public Simbolo(String ID) {
-        this.ID = ID;
+    public Simbolo() {
     }
 
     public String getAmbito() {
