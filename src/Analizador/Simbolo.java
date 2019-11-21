@@ -12,8 +12,9 @@ package Analizador;
 public class Simbolo {
 
     String Ambito, Ambito_Objeto, Tipo, Tipo_Dato, ID, Valor, Tipo_Retorno;
+    int Dimension1, Dimension2;
 
-    public Simbolo(String Ambito, String Ambito_Objeto, String Tipo, String Tipo_Dato, String ID, String Valor, String Tipo_Retorno) {
+    public Simbolo(String Ambito, String Ambito_Objeto, String Tipo, String Tipo_Dato, String ID, String Valor, String Tipo_Retorno, int Dimension1, int Dimension2) {
         
         //Ambito actual donde se encuentran
         this.Ambito = Ambito;
@@ -29,6 +30,10 @@ public class Simbolo {
         this.Valor = Valor;
         //Tipo de retorno de la funcion
         this.Tipo_Retorno = Tipo_Retorno;
+        //Valor en caso el tipo de dato tenga restriccion de tamaño
+        this.Dimension1 = Dimension1;        
+        //Valor en caso el tipo de dato tenga restriccion de tamaño
+        this.Dimension2 = Dimension2;
     }
 
     public Simbolo(String ID) {
@@ -90,4 +95,22 @@ public class Simbolo {
     public void setTipo_Retorno(String Tipo_Retorno) {
         this.Tipo_Retorno = Tipo_Retorno;
     }
+
+    public int getDimension1() {
+        return Dimension1;
+    }
+
+    public void setDimension1(int Dimension1) {
+        this.Dimension1 = Dimension1;
+    }
+
+    public int getDimension2() {
+        return Dimension2;
+    }
+
+    public void setDimension2(int Dimension2) {
+        this.Dimension2 = Dimension2;
+    }
+    
+    
 }
