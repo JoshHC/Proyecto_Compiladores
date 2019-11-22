@@ -39,7 +39,6 @@ public class FormPrincipal extends javax.swing.JFrame {
     public FormPrincipal() throws Exception {
         initComponents();
         generarTodo();
-        llenarTabla();
         this.setLocationRelativeTo(null);
     }
 
@@ -59,7 +58,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         btnAnalizar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtResultado = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -93,12 +91,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(txtResultado);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, 570, 289));
-
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Josué David Higueros Calderón - 1169317 - Ingeniería Informática y de Sistemas");
-        jLabel2.setToolTipText("");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(22, 448, 570, -1));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/tapiz-sql_1280x800_11668.jpg"))); // NOI18N
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 610, 480));
@@ -665,9 +657,8 @@ public class FormPrincipal extends javax.swing.JFrame {
         
         txtResultado.setText("");        
         //Se parsea el archivo
-        s.SetTabladeSimbolos(tabla);
         s.parse();
-        EscribirTS();
+        s.ImprimirTabla(txtruta.getText());
         //Se agrega la lista de errores sintacticos
         ErroresSintacticos = s.SyntacticErrors;
         //Se concatenan los errores en una variable para luego asignarlos al cuadro de texto
@@ -795,308 +786,6 @@ public class FormPrincipal extends javax.swing.JFrame {
         Files.move(sinRoute, sinRoute_aux);
     }
     
-    private void llenarTabla(){
-        tabla.add(new Simbolo("","","","","","","",0,0));
-        //Ambito, Ambito_objeto, Tipo, Tipo_dato, ID, Valor, Tipo_retorno, Dim1, Dim2
-        tabla.add(new Simbolo("","","database","","master","","",0,0));
-        tabla.add(new Simbolo("master","","schema","","dbo","","",0,0));
-        //
-        //DB Motociclismo
-        tabla.add(new Simbolo("","","database","","Motociclismo","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","","schema","","dbo","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","","schema","","NASCAR","","",0,0));
-        //Tabla Carrera
-        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Carrera","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","NombreGP","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","Año","","",4,0));
-        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","FechaHoraInicio","","",25,0));
-        tabla.add(new Simbolo("Motociclismo","Carrera","column","int","NumVueltas","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Carrera","column","varchar","NombreCircuito","","",15,0));
-        //Tabla Circuito
-        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Circuito","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Nombre","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Pais","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Tipo","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Circuito","column","float","Longitud","","",4,1));
-        tabla.add(new Simbolo("Motociclismo","Circuito","column","varchar","Diseñador","","",20,0));
-        //Tabla Consultas
-        tabla.add(new Simbolo("Motociclismo","dbo","tabla","","CONSULTAS_SQL","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","CONSULTAS_SQL","column","int","ID_CONSULTA","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","CONSULTAS_SQL","column","varchar","CONSULTA","","",800,0));
-        //Tabla Escuderia
-        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Escuderia","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","Nombre","","",20,0));
-        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","Manager","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","FabricanteMotor","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Escuderia","column","varchar","Sede","","",15,0));
-        //Tabla Piloto
-        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Piloto","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Piloto","column","int","Codigo","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","Nacionalidad","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","FechaNacimiento","","",25,0));
-        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","CarreraDebut","","",20,0));
-        tabla.add(new Simbolo("Motociclismo","Piloto","column","varchar","NombreEscuderia","","",20,0));
-        //Tabla Resultado
-        tabla.add(new Simbolo("Motociclismo","NASCAR","table","","Resultado","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Resultado","column","varchar","NombreGP","","",15,0));
-        tabla.add(new Simbolo("Motociclismo","Resultado","column","varchar","Año","","",4,0));
-        tabla.add(new Simbolo("Motociclismo","Resultado","column","int","CodPiloto","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Resultado","column","int","Puesto","","",0,0));
-        tabla.add(new Simbolo("Motociclismo","Resultado","column","varchar","DistanciaGanador","","",25,0));
-        //
-        //DB Veterinaria
-        tabla.add(new Simbolo("","","database","","Veterinaria","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","","schema","","dbo","","",0,0));
-        //Tabla CalendarioVacunacion
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","CalendarioVacunacion","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","CalendarioVacunacion","column","varchar","Fecha","","",8,0));
-        tabla.add(new Simbolo("Veterinaria","CalendarioVacunacion","column","varchar","Enfermedad","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","CalendarioVacunacion","column","varchar","CodigoPaciente","","",8,0));
-        //Tabla Cliente
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Cliente","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","DPI","","",13,0));
-        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","NIT","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Numero","","",8,0));
-        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Direccion","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Cliente","column","varchar","Correo","","",800,0));
-        //Table Clinica
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Clinica","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Clinica","column","int","Codigo","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Clinica","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Clinica","column","varchar","Direccion","","",800,0));
-        //Tabla Consulta
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Consulta","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","Sala","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioFijo","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","int","NumeroOperaciones","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","int","NumeroVacunas","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","int","NumeroPruebasEspecificas","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioOperaciones","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioVacunas","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","float","PrecioPruebasEspecificas","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","CodigoPaciente","","",8,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","NombreVeterinario","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Consulta","column","varchar","FECHA","","",8,0));
-        //Tabla Diagnostico
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Diagnostico","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","Resultado","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","PruebaEspecifica","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","Lugar","","",15,0));
-        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","FechaPrueba","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Diagnostico","column","varchar","CodigoPaciente","","",8,0));
-        //Tabla Factura
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Factura","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Factura","column","varchar","Numero","","",10,0));
-        tabla.add(new Simbolo("Veterinaria","Factura","column","varchar","Detalle","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Factura","column","float","Importe","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Factura","column","float","TOTAL","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Factura","column","int","CodigoClinica","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Factura","column","varchar","NITCliente","","",12,0));
-        //Tabla HistorialMedico
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","HistorialMedico","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","MotivoVisita","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","FechaVisita","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","CodigoPaciente","","",8,0));
-        tabla.add(new Simbolo("Veterinaria","HistorialMedico","column","varchar","ResultadoDiagnostico","","",20,0));
-        //Tabla Laboratorio
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Laboratorio","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Laboratorio","column","varchar","NIT","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","Laboratorio","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Laboratorio","column","varchar","Direccion","","",800,0));
-        //Tabla Medicina
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Medicina","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Medicina","column","int","Codigo","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Medicina","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Medicina","column","numeric","Codigo","","",10,2));
-        //Tabla OperacionQuirurgica
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","OperacionQuirurgica","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","int","CodigoClinica","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Quirofano","","",15,0));
-        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","NombreVeterinario","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Fecha","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Duracion","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","OperacionQuirurgica","column","varchar","Observaciones","","",800,0));
-        //Tabla Paciente
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Paciente","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Codigo","","",8,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Nombre","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Especie","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","Raza","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","ColorPelo","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","FechaNacimiento","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","PesoMedio","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","int","CodigoClinica","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Paciente","column","varchar","NITCliente","","",12,0));
-        //Tabla Producto
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Producto","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Producto","column","int","Codigo","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Producto","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Producto","column","numeric","PrecioUnitario","","",10,2));
-        //Tabla Proveedor
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Proveedor","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Proveedor","column","varchar","NIT","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","Proveedor","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Proveedor","column","varchar","Direccion","","",800,0));
-        //Tabla SuministraFarmacia
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","SuministraFarmacia","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","SuministraFarmacia","column","varchar","NITLaboratorio","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","SuministraFarmacia","column","int","CodigoMedicina","","",0,0));
-        //Tabla SuministraTienda
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","SuministraTienda","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","SuministraTienda","column","varchar","NITProveedor","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","SuministraTienda","column","int","CodigoProducto","","",0,0));
-        //Tabla Tratamiento
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Tratamiento","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Nombre","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Dosificacion","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Duracion","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","Resultado","","",20,0));
-        tabla.add(new Simbolo("Veterinaria","Tratamiento","column","varchar","CodigoPaciente","","",8,0));
-        //Tabla VentaFarmacia
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","VentaFarmacia","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","varchar","NITCliente","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","int","CodigoMedicina","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","varchar","Fecha","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","VentaFarmacia","column","int","CodigoClinica","","",0,0));
-        //Tabla VentaTienda
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","VentaTienda","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","varchar","NITCliente","","",12,0));
-        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","int","CodigoMedicina","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","varchar","Fecha","","",800,0));
-        tabla.add(new Simbolo("Veterinaria","VentaTienda","column","int","CodigoClinica","","",0,0));
-        //Tabla Veterinario
-        tabla.add(new Simbolo("Veterinaria","dbo","table","","Veterinario","","",0,0));
-        tabla.add(new Simbolo("Veterinaria","Veterinario","column","varchar","Nombre","","",50,0));
-        tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","SalarioBase","","",4,2));
-        tabla.add(new Simbolo("Veterinaria","Veterinario","column","float","Salario","","",4,2));
-    }
-    
-    public void EscribirTS() throws IOException {
-        //Se reemplaza el salto de línea por un salto de Línea que reconozca el BufferedWriter
-        String path = "C:\\Users\\Admin\\Desktop\\TablaSimbolos.out";
-
-        File ArchivoOut = new File(path);
-        FileWriter writer = new FileWriter(ArchivoOut);
-        PrintWriter pw = new PrintWriter(ArchivoOut);
-
-        String linea = "";
-        linea = "|Ambito                  |Ambito_Objeto          |Tipo           |Tipo_Dato      "
-                + "|ID                             |Valor  |Tipo_Retorno   |Dimension1 |Dimension2 |";
-        pw.write(linea);
-        
-        linea = "-----------------------------------------------------------------------------------"
-                + "-------------------------------------------------------------------------------";
-        pw.write(linea);
-        
-        for (Simbolo item : tabla) 
-        {            
-            float cociente;
-            linea = "";
-            
-            cociente = (item.Ambito.length()+1)/4;
-            // Impresion de Ambito con 6 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.Ambito + "\t\t\t\t\t\t"; break;
-                case 1: linea += "|" + item.Ambito + "\t\t\t\t\t"; break;
-                case 2: linea += "|" + item.Ambito + "\t\t\t\t"; break;
-                case 3: linea += "|" + item.Ambito + "\t\t\t"; break;
-                case 4: linea += "|" + item.Ambito + "\t\t"; break;
-                case 5: linea += "|" + item.Ambito + "\t"; break;
-                default: linea += "|" + item.Ambito; break;
-            }
-            
-            cociente = (item.Ambito_Objeto.length()+1)/4;
-            // Impresion de Ambito_Objeto con 6 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.Ambito_Objeto + "\t\t\t\t\t\t"; break;
-                case 1: linea += "|" + item.Ambito_Objeto + "\t\t\t\t\t"; break;
-                case 2: linea += "|" + item.Ambito_Objeto + "\t\t\t\t"; break;
-                case 3: linea += "|" + item.Ambito_Objeto + "\t\t\t"; break;
-                case 4: linea += "|" + item.Ambito_Objeto + "\t\t"; break;
-                case 5: linea += "|" + item.Ambito_Objeto + "\t"; break;
-                default: linea += "|" + item.Ambito_Objeto; break;
-            }
-            
-            cociente = (item.Tipo.length()+1)/4;
-            // Impresion de Tipo con 4 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.Tipo + "\t\t\t\t"; break;
-                case 1: linea += "|" + item.Tipo + "\t\t\t"; break;
-                case 2: linea += "|" + item.Tipo + "\t\t"; break;
-                case 3: linea += "|" + item.Tipo + "\t"; break;
-                default: linea += "|" + item.Tipo; break;
-            }
-            
-            cociente = (item.Tipo_Dato.length()+1)/4;
-            // Impresion de Tipo_Dato con 4 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.Tipo_Dato + "\t\t\t\t"; break;
-                case 1: linea += "|" + item.Tipo_Dato + "\t\t\t"; break;
-                case 2: linea += "|" + item.Tipo_Dato + "\t\t"; break;
-                case 3: linea += "|" + item.Tipo_Dato + "\t"; break;
-                default: linea += "|" + item.Tipo_Dato; break;
-            }
-            
-            cociente = (item.ID.length()+1)/4;
-            // Impresion de ID con 8 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.ID + "\t\t\t\t\t\t\t\t"; break;
-                case 1: linea += "|" + item.ID + "\t\t\t\t\t\t\t"; break;
-                case 2: linea += "|" + item.ID + "\t\t\t\t\t\t"; break;
-                case 3: linea += "|" + item.ID + "\t\t\t\t\t"; break;
-                case 4: linea += "|" + item.ID + "\t\t\t\t"; break;
-                case 5: linea += "|" + item.ID + "\t\t\t"; break;
-                case 6: linea += "|" + item.ID + "\t\t"; break;
-                case 7: linea += "|" + item.ID + "\t"; break;
-                default: linea += "|" + item.ID; break;
-            }
-            
-            cociente = (item.Valor.length()+1)/4;
-            // Impresion de Valor con 2 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.Valor + "\t\t"; break;
-                case 1: linea += "|" + item.Valor + "\t"; break;
-                default: linea += "|" + item.Valor; break;
-            }
-            
-            cociente = (item.Tipo_Retorno.length()+1)/4;
-            // Impresion de Tipo_Retorno con 4 tabulares
-            switch ((int)Math.floor(cociente))
-            {
-                case 0: linea += "|" + item.Tipo_Retorno + "\t\t\t\t"; break;
-                case 1: linea += "|" + item.Tipo_Retorno + "\t\t\t"; break;
-                case 2: linea += "|" + item.Tipo_Retorno + "\t\t"; break;
-                case 3: linea += "|" + item.Tipo_Retorno + "\t"; break;
-                default: linea += "|" + item.Tipo_Retorno; break;
-            }
-            
-            // Impresion de Dimension1 con 3 tabulares
-            if (item.Dimension1 < 100) linea += "|" + item.Dimension1 + "\t\t\t";
-            else if (item.Dimension1 >= 100 && item.Dimension1 < 1000000) linea += "|" + item.Dimension1 + "\t\t";
-            else linea += "|" + item.Dimension1 + "\t";
-
-            // Impresion de Dimension2 con 3 tabulares
-            if (item.Dimension2 < 100) linea += "|" + item.Dimension2 + "\t\t\t|";
-            else if (item.Dimension2 >= 100 && item.Dimension2 < 1000000) linea += "|" + item.Dimension2 + "\t\t|";
-            else linea += "|" + item.Dimension2 + "\t|";
-
-            pw.write(linea);
-        }
-
-        pw.append("FIN DE TABLA DE SIMBOLOS");
-
-        pw.close();
-        writer.close();
-    }
-    
     /**
      * @param args the command line arguments
      */
@@ -1139,7 +828,6 @@ public class FormPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnalizar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtResultado;
