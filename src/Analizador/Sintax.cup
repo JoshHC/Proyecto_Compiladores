@@ -632,12 +632,8 @@ non terminal OperadoresBooleanos, DML, DDL, TCL, TSQL, Final,Object2, Object2A, 
                                     if(Exists(ambitoActual, RESULT.getTipo(), RESULT.getID())){
                                     System.out.println("La variable " + RESULT.getID() + " ya existe en el ambito actual");
                                     }else{
-                                        if(RESULT.getTipo_Dato().equals(RESULT.getTipo_Retorno())){
-                                        Tabladesimbolos.add(RESULT);
-                                        }
-                                        else{
-                                            System.out.println("Tipos incompatibles");
-                                        }
+                                    Tabladesimbolos.add(RESULT);
+                                       
                                     }
                                         :}
         | Set_variable Final Inicial;
@@ -1209,11 +1205,13 @@ non terminal OperadoresBooleanos, DML, DDL, TCL, TSQL, Final,Object2, Object2A, 
             }else{
                 RESULT.setValor("");
             }
+            RESULT.setTipo_Retorno(v.getTipo_Retorno());
             :};
 
     valor ::= Igual Data_Type:d {:RESULT = d;:}
         | {:RESULT = new Simbolo();
-            RESULT.setValor("");:};
+            RESULT.setValor("");
+            RESULT.setTipo_Retorno("");:};
 	
     Variable_list ::= Coma Variable Tipo_variable Variable_list |;
     
